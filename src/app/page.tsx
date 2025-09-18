@@ -1,102 +1,289 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import Header from '@/components/Header';
+import { 
+  Smartphone, 
+  Users, 
+  Calendar, 
+  CreditCard, 
+  BarChart3, 
+  Shield,
+  Check,
+  Star,
+  Zap,
+  Clock,
+  Download,
+  Apple
+} from 'lucide-react';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
+      <Header />
+      
+      {/* Hero Section */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+        <div className="text-center space-y-8">
+          <Badge variant="secondary" className="px-4 py-2">
+            <Zap className="w-4 h-4 mr-2" />
+            임대 관리의 새로운 기준
+          </Badge>
+          
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-gray-100 leading-tight">
+            임대 관리, <br />
+            <span className="text-blue-600">집요정</span>과 함께 <br />
+            <span className="text-green-600">간편하게</span>
+          </h1>
+          
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            세입자 정보부터 임대료 관리, 계약 만료 알림까지. <br />
+            모든 임대 업무를 스마트폰 하나로 해결하세요.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link href="/signup">
+              <Button size="lg" className="px-8 py-4 text-lg">
+                <Smartphone className="w-5 h-5 mr-2" />
+                무료로 시작하기
+              </Button>
+            </Link>
+            <Link href="#download">
+              <Button variant="outline" size="lg" className="px-8 py-4 text-lg border-gray-300 dark:border-gray-600 dark:text-gray-100">
+                <Download className="w-5 h-5 mr-2" />
+                앱 다운로드
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="flex items-center justify-center gap-8 text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-green-500" />
+              신용카드 없이 시작
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-green-500" />
+              언제든 취소 가능
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-green-500" />
+              5명까지 무료
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center space-y-4 mb-16">
+          <Badge variant="outline">핵심 기능</Badge>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">
+            임대 관리의 모든 것을 한 곳에서
+          </h2>
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            복잡했던 임대 업무가 이제 간단해집니다
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-900">
+            <CardHeader>
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <Users className="w-6 h-6 text-blue-600" />
+              </div>
+              <CardTitle>세입자 관리</CardTitle>
+              <CardDescription>
+                세입자 정보를 체계적으로 관리하고 연락처, 계약 정보를 한눈에 확인하세요.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-900">
+            <CardHeader>
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                <CreditCard className="w-6 h-6 text-green-600" />
+              </div>
+              <CardTitle>임대료 추적</CardTitle>
+              <CardDescription>
+                임대료 납부 현황을 실시간으로 확인하고 연체자를 쉽게 파악할 수 있습니다.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-900">
+            <CardHeader>
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                <Calendar className="w-6 h-6 text-orange-600" />
+              </div>
+              <CardTitle>계약 만료 알림</CardTitle>
+              <CardDescription>
+                계약 만료일을 미리 알려드려 갱신 협상을 놓치지 않도록 도와드립니다.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-900">
+            <CardHeader>
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                <BarChart3 className="w-6 h-6 text-purple-600" />
+              </div>
+              <CardTitle>수익 분석</CardTitle>
+              <CardDescription>
+                임대 수익을 차트로 시각화하여 투자 성과를 명확하게 파악하세요.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-900">
+            <CardHeader>
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-red-600" />
+              </div>
+              <CardTitle>클라우드 백업</CardTitle>
+              <CardDescription>
+                소중한 데이터를 안전하게 클라우드에 보관하여 언제 어디서나 접근하세요.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-900">
+            <CardHeader>
+              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                <Clock className="w-6 h-6 text-indigo-600" />
+              </div>
+              <CardTitle>실시간 알림</CardTitle>
+              <CardDescription>
+                중요한 일정과 납부 알림을 푸시 알림으로 받아 놓치지 마세요.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+      </section>
+
+      {/* App Download Section */}
+      <section id="download" className="bg-gradient-to-r from-blue-600 to-green-600 py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center text-white">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              모바일 앱으로 언제 어디서나 관리하세요
+            </h2>
+            <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
+              집요정 앱을 다운로드하고 스마트한 임대 관리를 시작하세요
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" variant="secondary" className="px-8 py-4 text-lg">
+                <Smartphone className="w-5 h-5 mr-2" />
+                Android 다운로드
+              </Button>
+              <Button size="lg" variant="secondary" className="px-8 py-4 text-lg opacity-75 cursor-not-allowed" disabled>
+                <Apple className="w-5 h-5 mr-2" />
+                iOS (준비중)
+              </Button>
+            </div>
+            <p className="text-sm opacity-75 mt-4">
+              Android 5.0 이상 지원 | iOS 버전은 곧 출시 예정입니다
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="bg-gray-50 dark:bg-gray-900/50 py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-3xl lg:text-4xl font-bold text-blue-600">1000+</div>
+              <div className="text-gray-600 dark:text-gray-400 mt-2">활성 사용자</div>
+            </div>
+            <div>
+              <div className="text-3xl lg:text-4xl font-bold text-green-600">50000+</div>
+              <div className="text-gray-600 dark:text-gray-400 mt-2">관리된 세입자</div>
+            </div>
+            <div>
+              <div className="text-3xl lg:text-4xl font-bold text-orange-600">99.9%</div>
+              <div className="text-gray-600 dark:text-gray-400 mt-2">서비스 안정성</div>
+            </div>
+            <div>
+              <div className="text-3xl lg:text-4xl font-bold text-purple-600">24/7</div>
+              <div className="text-gray-600 dark:text-gray-400 mt-2">고객 지원</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="bg-gradient-to-r from-blue-600 to-green-600 rounded-2xl p-8 lg:p-16 text-center text-white">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+            지금 바로 시작해보세요
+          </h2>
+          <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
+            5명까지 완전 무료! 신용카드 등록 없이 바로 시작할 수 있습니다.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/signup">
+              <Button size="lg" variant="secondary" className="px-8 py-4 text-lg">
+                무료로 시작하기
+              </Button>
+            </Link>
+            <Link href="/pricing">
+              <Button size="lg" variant="outline" className="px-8 py-4 text-lg border-white text-white hover:bg-white hover:text-blue-600">
+                요금제 보기
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 dark:bg-black text-white py-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">집</span>
+                </div>
+                <span className="text-xl font-bold">집요정</span>
+              </div>
+              <p className="text-gray-400">
+                스마트한 임대 관리 솔루션
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">서비스</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href="#features" className="hover:text-white transition-colors">기능</Link></li>
+                <li><Link href="/pricing" className="hover:text-white transition-colors">요금제</Link></li>
+                <li><Link href="/download" className="hover:text-white transition-colors">앱 다운로드</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">지원</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href="/help" className="hover:text-white transition-colors">도움말</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">문의하기</Link></li>
+                <li><Link href="/faq" className="hover:text-white transition-colors">자주 묻는 질문</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">회사</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href="/about" className="hover:text-white transition-colors">회사 소개</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">개인정보처리방침</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">이용약관</Link></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 dark:border-gray-900 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 집요정. All rights reserved.</p>
+          </div>
+        </div>
       </footer>
     </div>
   );
