@@ -19,7 +19,6 @@ export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [emailChecking, setEmailChecking] = useState(false);
   
   const { signUp } = useAuth();
   const router = useRouter();
@@ -56,20 +55,23 @@ export default function SignupPage() {
     try {
       await signUp(email, password, name);
       router.push('/dashboard'); // 회원가입 성공 시 대시보드로 이동
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Signup error:', error);
       
       // Firebase 에러 메시지를 한국어로 변환
       let errorMessage = '회원가입 중 오류가 발생했습니다.';
-      
-      if (error.code === 'auth/email-already-in-use') {
-        errorMessage = '이미 사용 중인 이메일입니다.';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage = '유효하지 않은 이메일 형식입니다.';
-      } else if (error.code === 'auth/weak-password') {
-        errorMessage = '비밀번호가 너무 간단합니다.';
-      } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = '너무 많은 시도가 있었습니다. 잠시 후 다시 시도해주세요.';
+
+      if (error && typeof error === 'object' && 'code' in error) {
+        const firebaseError = error as { code: string };
+        if (firebaseError.code === 'auth/email-already-in-use') {
+          errorMessage = '이미 사용 중인 이메일입니다.';
+        } else if (firebaseError.code === 'auth/invalid-email') {
+          errorMessage = '유효하지 않은 이메일 형식입니다.';
+        } else if (firebaseError.code === 'auth/weak-password') {
+          errorMessage = '비밀번호가 너무 간단합니다.';
+        } else if (firebaseError.code === 'auth/too-many-requests') {
+          errorMessage = '너무 많은 시도가 있었습니다. 잠시 후 다시 시도해주세요.';
+        }
       }
       
       setError(errorMessage);
@@ -120,7 +122,7 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={loading || emailChecking}
+                disabled={loading}
               />
             </div>
             

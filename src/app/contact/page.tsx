@@ -391,7 +391,7 @@ export default function ContactPage() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 dark:text-gray-400">
-                구글 플레이스토어와 애플 앱스토어에서 '집요정'을 검색하여 다운로드할 수 있습니다.
+                구글 플레이스토어와 애플 앱스토어에서 &apos;집요정&apos;을 검색하여 다운로드할 수 있습니다.
               </p>
             </CardContent>
           </Card>

@@ -6,10 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Header from '@/components/Header';
-import { 
+import {
   Check,
   X,
-  Users,
   Building,
   Home,
   Building2,
@@ -24,9 +23,9 @@ const plans = [
   {
     name: '스타터',
     description: '소규모 임대인 전용',
-    price: '9,900',
-    tenantLimit: '10명',
-    tenantNumber: '10',
+    price: '14,900',
+    tenantLimit: '5명',
+    tenantNumber: '5',
     icon: Home,
     color: 'blue',
     features: [
@@ -41,11 +40,11 @@ const plans = [
     popular: false
   },
   {
-    name: '스탠다드',
-    description: '일반 임대인 (아파트·빌라 다수)',
+    name: '베이직',
+    description: '소규모 임대인 (원룸·오피스텔)',
     price: '24,900',
-    tenantLimit: '30명',
-    tenantNumber: '30',
+    tenantLimit: '10명',
+    tenantNumber: '10',
     icon: Building,
     color: 'green',
     features: [
@@ -60,11 +59,11 @@ const plans = [
     popular: true
   },
   {
-    name: '프로',
-    description: '중형 임대 사업자 전용',
-    price: '43,900',
-    tenantLimit: '50명',
-    tenantNumber: '50',
+    name: '스탠다드',
+    description: '일반 임대인 (아파트·빌라 다수)',
+    price: '54,900',
+    tenantLimit: '30명',
+    tenantNumber: '30',
     icon: Building2,
     color: 'purple',
     features: [
@@ -79,14 +78,33 @@ const plans = [
     popular: false
   },
   {
-    name: '프로 플러스',
-    description: '대형 임대 사업자용',
-    price: '43,900',
-    additionalPrice: '+ 10명당 7,900원',
-    tenantLimit: '50+',
-    tenantNumber: '50+',
+    name: '프로',
+    description: '중형 임대 사업자 전용',
+    price: '84,900',
+    tenantLimit: '50명',
+    tenantNumber: '50',
     icon: TrendingUp,
     color: 'orange',
+    features: [
+      '건물/호수 무제한 등록',
+      '계약서 업로드 (PDF/사진)',
+      '월세 납부 관리',
+      '계약 만료 알림',
+      '은행 API 자동 입금 확인',
+      '카톡/문자 자동 알림',
+      '세금 신고용 장부 생성'
+    ],
+    popular: false
+  },
+  {
+    name: '프로 플러스',
+    description: '대형 임대 사업자용',
+    price: '84,900',
+    additionalPrice: '+ 10명당 19,900원',
+    tenantLimit: '50+',
+    tenantNumber: '50+',
+    icon: Crown,
+    color: 'indigo',
     features: [
       '건물/호수 무제한 등록',
       '계약서 업로드 (PDF/사진)',
@@ -104,8 +122,8 @@ const plans = [
     price: '협의',
     tenantLimit: '무제한',
     tenantNumber: '∞',
-    icon: Crown,
-    color: 'indigo',
+    icon: Shield,
+    color: 'gray',
     features: [
       '모든 프로 플러스 기능',
       '전용 서버 옵션',
@@ -131,7 +149,7 @@ export default function PricingPage() {
   };
 
   const getAdditionalYearlyPrice = () => {
-    const monthlyPrice = 7900;
+    const monthlyPrice = 19900;
     const yearlyPrice = Math.floor(monthlyPrice * 12 * 0.85); // 15% 할인
     return yearlyPrice.toLocaleString();
   };
@@ -229,8 +247,8 @@ export default function PricingPage() {
                         </div>
                         {plan.additionalPrice && (
                           <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            {billingCycle === 'monthly' ? 
-                              '+ 10명당 ₩7,900/월' : 
+                            {billingCycle === 'monthly' ?
+                              '+ 10명당 ₩19,900/월' :
                               `+ 10명당 ₩${getAdditionalYearlyPrice()}/년`
                             }
                           </div>

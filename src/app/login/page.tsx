@@ -28,20 +28,23 @@ export default function LoginPage() {
     try {
       await signIn(email, password);
       router.push('/dashboard'); // 로그인 성공 시 대시보드로 이동
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
       
       // Firebase 에러 메시지를 한국어로 변환
       let errorMessage = '로그인 중 오류가 발생했습니다.';
-      
-      if (error.code === 'auth/user-not-found') {
-        errorMessage = '등록되지 않은 이메일입니다.';
-      } else if (error.code === 'auth/wrong-password') {
-        errorMessage = '비밀번호가 틀렸습니다.';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage = '유효하지 않은 이메일 형식입니다.';
-      } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = '로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.';
+
+      if (error && typeof error === 'object' && 'code' in error) {
+        const firebaseError = error as { code: string };
+        if (firebaseError.code === 'auth/user-not-found') {
+          errorMessage = '등록되지 않은 이메일입니다.';
+        } else if (firebaseError.code === 'auth/wrong-password') {
+          errorMessage = '비밀번호가 틀렸습니다.';
+        } else if (firebaseError.code === 'auth/invalid-email') {
+          errorMessage = '유효하지 않은 이메일 형식입니다.';
+        } else if (firebaseError.code === 'auth/too-many-requests') {
+          errorMessage = '로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.';
+        }
       }
       
       setError(errorMessage);

@@ -1,6 +1,6 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { initializeApp, FirebaseApp } from 'firebase/app';
+import { getAuth, Auth } from 'firebase/auth';
+import { getFirestore, Firestore } from 'firebase/firestore';
 
 // TODO: Firebase Console에서 실제 API 키를 받아서 설정해야 합니다
 // 1. https://console.firebase.google.com/ 접속
@@ -17,9 +17,9 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:000000000000:web:xxxxxxxxxxxxxxxxxxxxxxxx',
 };
 
-let app;
-let auth;
-let firestore;
+let app: FirebaseApp;
+let auth: Auth;
+let firestore: Firestore;
 
 try {
   // Firebase 앱 초기화
@@ -29,6 +29,10 @@ try {
 } catch (error) {
   console.error('Firebase 초기화 실패:', error);
   console.warn('Firebase가 올바르게 설정되지 않았습니다. 로컬 모드로 실행됩니다.');
+  // Create dummy instances to prevent undefined errors
+  app = {} as FirebaseApp;
+  auth = {} as Auth;
+  firestore = {} as Firestore;
 }
 
 // Firebase 서비스 내보내기
