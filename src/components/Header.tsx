@@ -1,5 +1,7 @@
 'use client';
 
+// 자동 배포 테스트용 주석
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
