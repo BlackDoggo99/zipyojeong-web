@@ -9,28 +9,42 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { 
-  Users, 
-  Smartphone, 
-  Download, 
+import {
+  Users,
+  Smartphone,
+  Download,
   LogOut,
   Crown,
   Calendar,
   CreditCard,
   Menu,
-  X
+  X,
+  Stars,
+  ShoppingBag
 } from 'lucide-react';
 
 export default function DashboardPage() {
-  const { user, userProfile, userPlan, loading, signOut } = useAuth();
+  const { user, userProfile, userPlan, loading, signOut, getUserPoints } = useAuth();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userPoints, setUserPoints] = useState(0);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
+
+  // 포인트 로드
+  useEffect(() => {
+    const loadPoints = async () => {
+      if (user && getUserPoints) {
+        const points = await getUserPoints();
+        setUserPoints(points);
+      }
+    };
+    loadPoints();
+  }, [user, getUserPoints]);
 
   if (loading) {
     return (
@@ -83,8 +97,36 @@ export default function DashboardPage() {
               </Link>
             </div>
             
+            {/* 데스크톱 네비게이션 메뉴 */}
+            <nav className="hidden md:flex items-center space-x-6">
+              <Link
+                href="/pricing"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+              >
+                요금제
+              </Link>
+              <Link
+                href="/points-shop"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors flex items-center"
+              >
+                <ShoppingBag className="h-4 w-4 mr-1" />
+                포인트 상점
+              </Link>
+              <Link
+                href="/contact"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+              >
+                문의
+              </Link>
+            </nav>
+
             {/* 데스크톱 버튼들 */}
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-2">
+              {/* 포인트 표시 */}
+              <div className="flex items-center bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-1.5 rounded-full text-sm font-medium">
+                <Stars className="h-4 w-4 mr-1" />
+                {userPoints.toLocaleString()}P
+              </div>
               <Badge variant={userPlan?.plan !== 'free' ? 'default' : 'secondary'}>
                 {userPlan?.plan !== 'free' ? (
                   <>
@@ -145,8 +187,12 @@ export default function DashboardPage() {
           
           {/* 메뉴 아이템들 */}
           <div className="flex flex-col p-4">
-            {/* 플랜 상태 */}
+            {/* 포인트 표시 */}
             <div className="mb-4 pb-4 border-b dark:border-gray-800">
+              <div className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-3 rounded-lg mb-3">
+                <Stars className="h-5 w-5 mr-2" />
+                <span className="font-semibold">{userPoints.toLocaleString()}P</span>
+              </div>
               <Badge variant={userPlan?.plan !== 'free' ? 'default' : 'secondary'} className="w-full justify-center py-2">
                 {userPlan?.plan !== 'free' ? (
                   <>
@@ -159,24 +205,30 @@ export default function DashboardPage() {
               </Badge>
             </div>
 
-            <Link 
-              href="/dashboard" 
+            <Link
+              href="/dashboard"
               className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               대시보드
             </Link>
-            {(!userPlan || userPlan.plan === 'free') && (
-              <Link 
-                href="/pricing" 
-                className="py-3 text-blue-600 hover:text-blue-700 transition-colors font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                프리미엄 업그레이드
-              </Link>
-            )}
-            <Link 
-              href="/contact" 
+            <Link
+              href="/pricing"
+              className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              요금제
+            </Link>
+            <Link
+              href="/points-shop"
+              className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <ShoppingBag className="h-4 w-4 mr-2" />
+              포인트 상점
+            </Link>
+            <Link
+              href="/contact"
               className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
@@ -224,16 +276,16 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
-                  variant="secondary" 
+                <Button
+                  variant="secondary"
                   onClick={handleDownloadApp}
-                  className="flex-1"
+                  className="flex-1 text-gray-900 dark:text-white"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   안드로이드 앱 다운로드
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="flex-1 border-white text-white hover:bg-white hover:text-blue-600"
                   onClick={handleDownloadApp}
                 >

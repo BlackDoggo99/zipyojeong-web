@@ -100,11 +100,29 @@ export default function Header() {
               ) : (
                 <>
                   <Link
+                    href="/#features"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                  >
+                    기능
+                  </Link>
+                  <Link
+                    href="/pricing"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                  >
+                    요금제
+                  </Link>
+                  <Link
                     href="/points-shop"
                     className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors flex items-center"
                   >
                     <ShoppingBag className="h-4 w-4 mr-1" />
                     포인트 상점
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                  >
+                    문의
                   </Link>
                 </>
               )}
@@ -202,24 +220,21 @@ export default function Header() {
               </>
             )}
 
-            {!isAuthenticated && (
-              <>
-                <Link
-                  href="/#features"
-                  className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  기능
-                </Link>
-                <Link
-                  href="/pricing"
-                  className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  요금제
-                </Link>
-              </>
-            )}
+            <Link
+              href="/#features"
+              className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              기능
+            </Link>
+
+            <Link
+              href="/pricing"
+              className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              요금제
+            </Link>
 
             <Link
               href="/contact"
