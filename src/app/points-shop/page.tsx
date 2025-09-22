@@ -109,7 +109,6 @@ export default function PointsShopPage() {
   const { user, userProfile, userPlan, getUserPoints, purchasePlanWithPoints, loading: authLoading } = useAuth();
   const router = useRouter();
   const [userPoints, setUserPoints] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState<string | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [error, setError] = useState('');
@@ -119,14 +118,11 @@ export default function PointsShopPage() {
     if (!getUserPoints) return;
 
     try {
-      setLoading(true);
       const points = await getUserPoints();
       setUserPoints(points);
     } catch (error) {
       console.error('포인트 로드 실패:', error);
       setError('포인트 정보를 불러오는데 실패했습니다.');
-    } finally {
-      setLoading(false);
     }
   }, [getUserPoints]);
 
@@ -178,7 +174,7 @@ export default function PointsShopPage() {
     }
   };
 
-  if (authLoading || loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
         <Header />
