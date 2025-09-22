@@ -106,7 +106,7 @@ const pointPlans = [
 ];
 
 export default function PointsShopPage() {
-  const { user, userProfile, userPlan, getUserPoints, purchasePlanWithPoints } = useAuth();
+  const { user, userProfile, userPlan, getUserPoints, purchasePlanWithPoints, loading: authLoading } = useAuth();
   const router = useRouter();
   const [userPoints, setUserPoints] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -131,13 +131,20 @@ export default function PointsShopPage() {
   }, [getUserPoints]);
 
   useEffect(() => {
-    if (!user) {
+    // 인증 로딩이 완료되지 않았다면 기다림
+    if (authLoading) return;
+
+    // 인증 로딩 완료 후 사용자가 없다면 로그인 페이지로
+    if (!authLoading && !user) {
       router.push('/login');
       return;
     }
 
-    loadUserPoints();
-  }, [user, router, loadUserPoints]);
+    // 사용자가 있다면 포인트 로드
+    if (user) {
+      loadUserPoints();
+    }
+  }, [user, authLoading, router, loadUserPoints]);
 
   const handlePurchase = async (plan: typeof pointPlans[0]) => {
     if (!user || !purchasePlanWithPoints) return;
@@ -171,7 +178,7 @@ export default function PointsShopPage() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
         <Header />
