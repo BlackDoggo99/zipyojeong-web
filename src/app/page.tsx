@@ -63,11 +63,11 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-green-500" />
-              언제든 취소 가능
+              무료 기능 무제한 사용
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-green-500" />
-              5명까지 무료
+              추천 가입시 1개월 프리미엄
             </div>
           </div>
         </div>
@@ -192,20 +192,20 @@ export default function HomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl lg:text-4xl font-bold text-blue-600">1000+</div>
-              <div className="text-gray-600 dark:text-gray-400 mt-2">활성 사용자</div>
+              <div className="text-3xl lg:text-4xl font-bold text-blue-600">5명</div>
+              <div className="text-gray-600 dark:text-gray-400 mt-2">무료 관리 가능</div>
             </div>
             <div>
-              <div className="text-3xl lg:text-4xl font-bold text-green-600">50000+</div>
-              <div className="text-gray-600 dark:text-gray-400 mt-2">관리된 세입자</div>
+              <div className="text-3xl lg:text-4xl font-bold text-green-600">∞</div>
+              <div className="text-gray-600 dark:text-gray-400 mt-2">무제한 무료 사용</div>
             </div>
             <div>
-              <div className="text-3xl lg:text-4xl font-bold text-orange-600">99.9%</div>
-              <div className="text-gray-600 dark:text-gray-400 mt-2">서비스 안정성</div>
+              <div className="text-3xl lg:text-4xl font-bold text-orange-600">0원</div>
+              <div className="text-gray-600 dark:text-gray-400 mt-2">시작 비용</div>
             </div>
             <div>
               <div className="text-3xl lg:text-4xl font-bold text-purple-600">24/7</div>
-              <div className="text-gray-600 dark:text-gray-400 mt-2">고객 지원</div>
+              <div className="text-gray-600 dark:text-gray-400 mt-2">언제든 시작 가능</div>
             </div>
           </div>
         </div>
@@ -280,7 +280,7 @@ export default function HomePage() {
           </div>
           
           <div className="border-t border-gray-800 dark:border-gray-900 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 집요정. All rights reserved.</p>
+            <p>&copy; 2025 라이프컴포트 (Life Comfort). All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
+import { PlanService } from '@/lib/planService';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -21,7 +22,7 @@ import {
 } from 'lucide-react';
 
 export default function DashboardPage() {
-  const { user, userProfile, loading, signOut } = useAuth();
+  const { user, userProfile, userPlan, loading, signOut } = useAuth();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -84,11 +85,11 @@ export default function DashboardPage() {
             
             {/* 데스크톱 버튼들 */}
             <div className="hidden md:flex items-center space-x-4">
-              <Badge variant={userProfile.plan === 'premium' ? 'default' : 'secondary'}>
-                {userProfile.plan === 'premium' ? (
+              <Badge variant={userPlan?.plan !== 'free' ? 'default' : 'secondary'}>
+                {userPlan?.plan !== 'free' ? (
                   <>
                     <Crown className="w-3 h-3 mr-1" />
-                    프리미엄
+                    {userPlan ? PlanService.getPlanInfo(userPlan.plan).name : '무료 플랜'}
                   </>
                 ) : (
                   '무료 플랜'
@@ -146,11 +147,11 @@ export default function DashboardPage() {
           <div className="flex flex-col p-4">
             {/* 플랜 상태 */}
             <div className="mb-4 pb-4 border-b dark:border-gray-800">
-              <Badge variant={userProfile.plan === 'premium' ? 'default' : 'secondary'} className="w-full justify-center py-2">
-                {userProfile.plan === 'premium' ? (
+              <Badge variant={userPlan?.plan !== 'free' ? 'default' : 'secondary'} className="w-full justify-center py-2">
+                {userPlan?.plan !== 'free' ? (
                   <>
                     <Crown className="w-3 h-3 mr-1" />
-                    프리미엄 플랜
+                    {userPlan ? PlanService.getPlanInfo(userPlan.plan).name : '무료 플랜'}
                   </>
                 ) : (
                   '무료 플랜'
@@ -165,7 +166,7 @@ export default function DashboardPage() {
             >
               대시보드
             </Link>
-            {userProfile.plan === 'free' && (
+            {(!userPlan || userPlan.plan === 'free') && (
               <Link 
                 href="/pricing" 
                 className="py-3 text-blue-600 hover:text-blue-700 transition-colors font-medium"
@@ -252,7 +253,7 @@ export default function DashboardPage() {
                 </div>
                 <CardTitle>세입자 관리</CardTitle>
                 <CardDescription>
-                  {userProfile.plan === 'free' ? '최대 5명까지' : '무제한'} 세입자 정보를 체계적으로 관리하세요
+                  {(!userPlan || userPlan.plan === 'free') ? '최대 5명까지' : userPlan ? `최대 ${PlanService.getPlanInfo(userPlan.plan).tenantLimit === -1 ? '무제한' : `${PlanService.getPlanInfo(userPlan.plan).tenantLimit}명까지`}` : '최대 5명까지'} 세입자 정보를 체계적으로 관리하세요
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -283,7 +284,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Plan Status */}
-          {userProfile.plan === 'free' && (
+          {(!userPlan || userPlan.plan === 'free') && (
             <Card className="border-orange-200 bg-orange-50 dark:bg-orange-950/20 dark:border-orange-900">
               <CardHeader>
                 <CardTitle className="text-orange-800 dark:text-orange-400">무료 플랜 사용 중</CardTitle>

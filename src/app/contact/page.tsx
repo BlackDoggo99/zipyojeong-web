@@ -410,7 +410,7 @@ export default function ContactPage() {
       <footer className="bg-gray-900 dark:bg-black text-white py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-gray-400">
-            © 2024 집요정. All rights reserved.
+            © 2025 라이프컴포트 (Life Comfort). All rights reserved.
           </p>
         </div>
       </footer>

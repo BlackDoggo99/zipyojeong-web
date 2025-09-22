@@ -3,14 +3,17 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Stars, ShoppingBag, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userPoints, setUserPoints] = useState(0);
+  const { getUserPoints, signOut } = useAuth();
 
   // 메뉴가 열릴 때 스크롤 방지
   useEffect(() => {
@@ -25,14 +28,28 @@ export default function Header() {
     };
   }, [isMenuOpen]);
 
-  // 인증 상태 확인
+  // 인증 상태 확인 및 포인트 로드
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setIsAuthenticated(!!user);
+      if (user && getUserPoints) {
+        const points = await getUserPoints();
+        setUserPoints(points);
+      } else {
+        setUserPoints(0);
+      }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [getUserPoints]);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+    }
+  };
 
   return (
     <>
@@ -57,35 +74,66 @@ export default function Header() {
 
             {/* 데스크톱 네비게이션 */}
             <nav className="hidden md:flex items-center space-x-8">
-              <Link 
-                href="/#features" 
-                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-              >
-                기능
-              </Link>
-              <Link 
-                href="/pricing" 
-                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-              >
-                요금제
-              </Link>
-              <Link 
-                href="/contact" 
-                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-              >
-                문의
-              </Link>
+              {!isAuthenticated ? (
+                <>
+                  <Link
+                    href="/#features"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                  >
+                    기능
+                  </Link>
+                  <Link
+                    href="/pricing"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                  >
+                    요금제
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                  >
+                    문의
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/points-shop"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors flex items-center"
+                  >
+                    <ShoppingBag className="h-4 w-4 mr-1" />
+                    포인트 상점
+                  </Link>
+                </>
+              )}
             </nav>
 
             {/* CTA 버튼들 (데스크톱) */}
             <div className="hidden md:flex items-center space-x-2">
-              <ThemeToggle />
-              <Link href="/login">
-                <Button variant="ghost">로그인</Button>
-              </Link>
-              <Link href="/signup">
-                <Button>무료로 시작하기</Button>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  {/* 포인트 표시 */}
+                  <div className="flex items-center bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-1.5 rounded-full text-sm font-medium">
+                    <Stars className="h-4 w-4 mr-1" />
+                    {userPoints.toLocaleString()}P
+                  </div>
+                  <ThemeToggle />
+                  <Button variant="ghost" onClick={handleSignOut}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    로그아웃
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <ThemeToggle />
+                  <Link href="/login">
+                    <Button variant="ghost">로그인</Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button>무료로 시작하기</Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* 모바일 테마 토글 (오른쪽) */}
@@ -131,45 +179,85 @@ export default function Header() {
           
           {/* 메뉴 아이템들 */}
           <div className="flex flex-col p-4">
-            <Link 
-              href="/#features" 
-              className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              기능
-            </Link>
-            <Link 
-              href="/pricing" 
-              className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              요금제
-            </Link>
-            <Link 
-              href="/contact" 
+            {isAuthenticated && (
+              <>
+                {/* 포인트 표시 */}
+                <div className="mb-4 pb-4 border-b dark:border-gray-800">
+                  <div className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-3 rounded-lg">
+                    <Stars className="h-5 w-5 mr-2" />
+                    <span className="font-semibold">{userPoints.toLocaleString()}P</span>
+                  </div>
+                </div>
+
+                <Link
+                  href="/points-shop"
+                  className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <ShoppingBag className="h-4 w-4 mr-2" />
+                  포인트 상점
+                </Link>
+              </>
+            )}
+
+            {!isAuthenticated && (
+              <>
+                <Link
+                  href="/#features"
+                  className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  기능
+                </Link>
+                <Link
+                  href="/pricing"
+                  className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  요금제
+                </Link>
+              </>
+            )}
+
+            <Link
+              href="/contact"
               className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               문의하기
             </Link>
-            <Link 
-              href="/#download" 
-              className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              앱 다운로드
-            </Link>
-            
+
+            {!isAuthenticated && (
+              <Link
+                href="/#download"
+                className="py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                앱 다운로드
+              </Link>
+            )}
+
             {/* 구분선 */}
             <div className="border-t dark:border-gray-800 my-4" />
-            
-            {/* 로그인/회원가입 버튼 */}
-            <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-              <Button variant="ghost" className="w-full mb-2">로그인</Button>
-            </Link>
-            <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
-              <Button className="w-full">무료로 시작하기</Button>
-            </Link>
+
+            {isAuthenticated ? (
+              <Button variant="ghost" className="w-full justify-start" onClick={() => {
+                handleSignOut();
+                setIsMenuOpen(false);
+              }}>
+                <LogOut className="w-4 h-4 mr-2" />
+                로그아웃
+              </Button>
+            ) : (
+              <>
+                <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full mb-2">로그인</Button>
+                </Link>
+                <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
+                  <Button className="w-full">무료로 시작하기</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

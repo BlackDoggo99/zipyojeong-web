@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
+import { AddressSearch, AddressData } from '@/components/ui/address-search';
 import { Eye, EyeOff, Loader2, CheckCircle } from 'lucide-react';
 
 export default function SignupPage() {
@@ -15,11 +16,13 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [address, setAddress] = useState<AddressData | null>(null);
+  const [referralCode, setReferralCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const { signUp } = useAuth();
   const router = useRouter();
 
@@ -39,6 +42,12 @@ export default function SignupPage() {
     setError('');
 
     // 입력값 검증
+    if (!address) {
+      setError('주소를 입력해주세요.');
+      setLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('비밀번호가 일치하지 않습니다.');
       setLoading(false);
@@ -53,7 +62,7 @@ export default function SignupPage() {
     }
 
     try {
-      await signUp(email, password, name);
+      await signUp(email, password, name, address, referralCode);
       router.push('/dashboard'); // 회원가입 성공 시 대시보드로 이동
     } catch (error: unknown) {
       console.error('Signup error:', error);
@@ -98,7 +107,9 @@ export default function SignupPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">이름</Label>
+              <Label htmlFor="name">
+                이름 <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="name"
                 type="text"
@@ -114,7 +125,9 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">이메일</Label>
+              <Label htmlFor="email">
+                이메일 <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -125,9 +138,16 @@ export default function SignupPage() {
                 disabled={loading}
               />
             </div>
-            
+
+            <AddressSearch
+              onAddressSelect={setAddress}
+              disabled={loading}
+            />
+
             <div className="space-y-2">
-              <Label htmlFor="password">비밀번호</Label>
+              <Label htmlFor="password">
+                비밀번호 <span className="text-red-500">*</span>
+              </Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -157,7 +177,9 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">비밀번호 확인</Label>
+              <Label htmlFor="confirmPassword">
+                비밀번호 확인 <span className="text-red-500">*</span>
+              </Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -188,7 +210,30 @@ export default function SignupPage() {
                 </div>
               )}
             </div>
-            
+
+            <div className="space-y-2">
+              <Label htmlFor="referralCode" className="text-sm font-medium dark:text-gray-200">
+                추천인 코드 (선택)
+              </Label>
+              <Input
+                id="referralCode"
+                type="text"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                placeholder="추천인 코드를 입력하세요"
+                className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
+                maxLength={7}
+              />
+              <div className="text-xs text-gray-500 dark:text-gray-400 bg-green-50 dark:bg-green-950/30 p-2 rounded-md">
+                <div className="flex items-center gap-1 mb-1">
+                  <CheckCircle className="w-3 h-3 text-green-600" />
+                  <span className="font-medium">추천인 코드 혜택</span>
+                </div>
+                • 추천인 코드 입력 시 1개월 프리미엄 플랜 무료 제공<br/>
+                • 모든 프리미엄 기능 이용 가능 (5명 임차인 관리, 고급 기능 등)
+              </div>
+            </div>
+
             {error && (
               <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
                 {error}
