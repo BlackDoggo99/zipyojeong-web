@@ -9,12 +9,12 @@ import { getFirestore, Firestore } from 'firebase/firestore';
 // 4. 생성된 설정 값을 아래에 입력
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyBfz2t9JIe3E8fsiLOC9S_wQ0yl51-fHIw',
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'zipyojeong-f1e17.firebaseapp.com',
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'zipyojeong-f1e17',
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'zipyojeong-f1e17.appspot.com',
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '000000000000',
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:000000000000:web:xxxxxxxxxxxxxxxxxxxxxxxx',
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'zipyojeong-f1e17.firebasestorage.app',
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '999185260359',
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:999185260359:web:3de5f09dabfb2e59c8f662',
 };
 
 let app: FirebaseApp;

@@ -133,8 +133,10 @@ export function useAuth() {
     fullAddress: string;
   }, referralCode?: string) => {
     try {
+      console.log('회원가입 시작:', { email, name, address, referralCode });
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      console.log('Firebase Auth 계정 생성 성공:', user.uid);
 
       // 사용자 프로필 생성
       const profile: UserProfile = {
@@ -153,7 +155,9 @@ export function useAuth() {
         referralCode: user.uid.substring(0, 7).toUpperCase(),
       };
 
+      console.log('Firestore에 프로필 저장 시도:', firestoreProfile);
       await setDoc(doc(firestore, 'users', user.uid), firestoreProfile);
+      console.log('Firestore 프로필 저장 성공');
 
       // 추천인 코드 처리
       if (referralCode && referralCode.trim()) {
@@ -167,8 +171,10 @@ export function useAuth() {
 
       setUserProfile(profile);
 
+      console.log('회원가입 완료');
       return userCredential;
     } catch (error) {
+      console.error('회원가입 오류:', error);
       throw error;
     }
   };
