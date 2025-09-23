@@ -120,25 +120,37 @@ export class PlanService {
     }
   }
 
-  // 월간 플랜 할당
-  static async assignMonthlyPlan(userId: string, plan: SubscriptionPlan): Promise<void> {
+  // 월간 플랜 할당 (기간 연장 지원)
+  static async assignMonthlyPlan(userId: string, plan: SubscriptionPlan, extendExisting: boolean = false): Promise<void> {
     const expiryDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30일 후
-    await this.assignPlanToUser(userId, plan, expiryDate);
+    await this.assignPlanToUser(userId, plan, expiryDate, true, extendExisting);
   }
 
-  // 연간 플랜 할당
-  static async assignYearlyPlan(userId: string, plan: SubscriptionPlan): Promise<void> {
+  // 연간 플랜 할당 (기간 연장 지원)
+  static async assignYearlyPlan(userId: string, plan: SubscriptionPlan, extendExisting: boolean = false): Promise<void> {
     const expiryDate = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // 365일 후
-    await this.assignPlanToUser(userId, plan, expiryDate);
+    await this.assignPlanToUser(userId, plan, expiryDate, true, extendExisting);
   }
 
-  // 플랜 할당
-  static async assignPlanToUser(userId: string, plan: SubscriptionPlan, expiryDate: Date | null = null, isActive: boolean = true): Promise<void> {
+  // 플랜 할당 (기간 연장 지원)
+  static async assignPlanToUser(userId: string, plan: SubscriptionPlan, expiryDate: Date | null = null, isActive: boolean = true, extendExisting: boolean = false): Promise<void> {
     try {
       const userInfo = await this.getUserInfo(userId);
+      let finalExpiryDate = expiryDate;
+
+      // 기간 연장 옵션이 활성화된 경우
+      if (extendExisting && expiryDate) {
+        const currentPlan = await this.getUserPlan(userId);
+        if (currentPlan.expiryDate && currentPlan.expiryDate > new Date()) {
+          // 현재 만료일이 미래인 경우, 현재 만료일에 새 기간을 추가
+          const extensionDays = Math.ceil((expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+          finalExpiryDate = new Date(currentPlan.expiryDate.getTime() + (extensionDays * 24 * 60 * 60 * 1000));
+        }
+      }
+
       const subscription: SubscriptionModel = {
         plan,
-        expiryDate,
+        expiryDate: finalExpiryDate,
         isActive,
         userEmail: userInfo.email,
         userName: userInfo.name,
@@ -148,7 +160,7 @@ export class PlanService {
       await this.setUserPlan(userId, subscription);
 
       // 플랜 할당 로그 기록
-      await this.logPlanAssignment(userId, plan, expiryDate);
+      await this.logPlanAssignment(userId, plan, finalExpiryDate);
     } catch (error) {
       console.error('플랜 할당 실패:', error);
       throw error;
@@ -313,6 +325,180 @@ export class PlanService {
     } catch (error) {
       console.error('사용자 플랜 데이터 마이그레이션 실패:', error);
       throw error;
+    }
+  }
+
+  // PG 결제 성공 후 플랜 적용 (기간 연장 지원)
+  static async processPGPayment(
+    userId: string,
+    plan: SubscriptionPlan,
+    billingCycle: 'monthly' | 'yearly',
+    paymentData: {
+      paymentId: string;
+      amount: number;
+      paymentMethod: string;
+    }
+  ): Promise<void> {
+    try {
+      const duration = billingCycle === 'monthly' ? 30 : 365;
+      const currentPlan = await this.getUserPlan(userId);
+      const userInfo = await this.getUserInfo(userId);
+
+      let expiryDate: Date;
+      let extendExisting = false;
+
+      // 현재 같은 플랜이고 만료일이 미래인 경우 기간 연장
+      if (currentPlan.plan === plan && currentPlan.expiryDate && currentPlan.expiryDate > new Date()) {
+        expiryDate = new Date(currentPlan.expiryDate.getTime() + (duration * 24 * 60 * 60 * 1000));
+        extendExisting = true;
+      } else {
+        // 신규 구매 또는 다른 플랜으로 변경
+        expiryDate = new Date(Date.now() + duration * 24 * 60 * 60 * 1000);
+      }
+
+      const batch = writeBatch(firestore);
+
+      // 플랜 업데이트
+      const planRef = doc(firestore, this.USER_PLANS_COLLECTION, userId);
+      batch.set(planRef, {
+        plan: plan,
+        expiryDate: expiryDate.toISOString(),
+        isActive: true,
+        userEmail: userInfo.email,
+        userName: userInfo.name,
+        updatedAt: Timestamp.now()
+      }, { merge: true });
+
+      // 결제 기록 저장
+      const paymentLogRef = doc(collection(firestore, 'payment_logs'));
+      batch.set(paymentLogRef, {
+        userId: userId,
+        planId: plan,
+        billingCycle: billingCycle,
+        paymentId: paymentData.paymentId,
+        amount: paymentData.amount,
+        paymentMethod: paymentData.paymentMethod,
+        duration: duration,
+        expiryDate: expiryDate.toISOString(),
+        extendedExisting: extendExisting,
+        paymentDate: Timestamp.now(),
+        status: 'completed'
+      });
+
+      await batch.commit();
+      console.log('PG 결제 처리 완료:', { userId, plan, billingCycle, extendExisting });
+    } catch (error) {
+      console.error('PG 결제 처리 실패:', error);
+      throw error;
+    }
+  }
+
+  // 관리자용: 사용자 플랜 제거/비활성화
+  static async removePlanFromUser(userId: string): Promise<void> {
+    try {
+      await this.setUserPlan(userId, {
+        plan: 'free',
+        expiryDate: null,
+        isActive: true
+      });
+
+      // 플랜 제거 로그 기록
+      await setDoc(doc(collection(firestore, 'plan_history')), {
+        userId: userId,
+        plan: 'free',
+        expiryDate: null,
+        action: 'removed_by_admin',
+        createdAt: Timestamp.now()
+      });
+
+      console.log('관리자에 의한 플랜 제거:', userId);
+    } catch (error) {
+      console.error('플랜 제거 실패:', error);
+      throw error;
+    }
+  }
+
+  // 관리자용: 사용자에게 무제한 플랜 부여
+  static async grantUnlimitedPlan(userId: string, plan: SubscriptionPlan): Promise<void> {
+    try {
+      const userInfo = await this.getUserInfo(userId);
+
+      await this.setUserPlan(userId, {
+        plan: plan,
+        expiryDate: null, // 무제한
+        isActive: true,
+        userEmail: userInfo.email,
+        userName: userInfo.name
+      });
+
+      // 무제한 플랜 부여 로그 기록
+      await setDoc(doc(collection(firestore, 'plan_history')), {
+        userId: userId,
+        plan: plan,
+        expiryDate: null,
+        action: 'unlimited_granted_by_admin',
+        createdAt: Timestamp.now()
+      });
+
+      console.log('관리자에 의한 무제한 플랜 부여:', { userId, plan });
+    } catch (error) {
+      console.error('무제한 플랜 부여 실패:', error);
+      throw error;
+    }
+  }
+
+  // 관리자용: 사용자에게 특정 기간 플랜 부여
+  static async grantTimedPlan(userId: string, plan: SubscriptionPlan, days: number): Promise<void> {
+    try {
+      const expiryDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+      const userInfo = await this.getUserInfo(userId);
+
+      await this.setUserPlan(userId, {
+        plan: plan,
+        expiryDate: expiryDate,
+        isActive: true,
+        userEmail: userInfo.email,
+        userName: userInfo.name
+      });
+
+      // 관리자 플랜 부여 로그 기록
+      await setDoc(doc(collection(firestore, 'plan_history')), {
+        userId: userId,
+        plan: plan,
+        expiryDate: expiryDate.toISOString(),
+        duration: days,
+        action: 'granted_by_admin',
+        createdAt: Timestamp.now()
+      });
+
+      console.log('관리자에 의한 기간 플랜 부여:', { userId, plan, days });
+    } catch (error) {
+      console.error('기간 플랜 부여 실패:', error);
+      throw error;
+    }
+  }
+
+  // 자동 만료 처리를 위한 클라이언트 사이드 체크
+  static async checkUserPlanExpiry(userId: string): Promise<boolean> {
+    try {
+      const userPlan = await this.getUserPlan(userId);
+
+      if (userPlan.expiryDate && userPlan.expiryDate < new Date() && userPlan.isActive) {
+        // 만료된 플랜을 무료 플랜으로 변경
+        await this.setUserPlan(userId, {
+          plan: 'free',
+          expiryDate: null,
+          isActive: true
+        });
+
+        console.log('클라이언트에서 만료된 플랜 처리:', userId);
+        return true; // 만료 처리됨
+      }
+
+      return false; // 만료되지 않음
+    } catch (error) {
+      console.error('사용자 플랜 만료 체크 실패:', error);
+      return false;
     }
   }
 }

@@ -47,7 +47,8 @@ export function useAuth() {
           setUserProfile(profile);
         }
 
-        // 사용자 플랜 가져오기
+        // 사용자 플랜 가져오기 및 만료 체크
+        await PlanService.checkUserPlanExpiry(user.uid);
         const userPlan = await PlanService.getUserPlan(user.uid);
         setUserPlan(userPlan);
       } else {
