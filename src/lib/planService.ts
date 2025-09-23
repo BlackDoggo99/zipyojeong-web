@@ -266,4 +266,53 @@ export class PlanService {
       console.error('만료된 플랜 처리 실패:', error);
     }
   }
+
+  // 기존 사용자 플랜 데이터 마이그레이션 (한 번만 실행)
+  static async migrateUserPlansData(): Promise<void> {
+    try {
+      console.log('사용자 플랜 데이터 마이그레이션 시작...');
+
+      // 모든 user_plans 문서 가져오기
+      const userPlansSnapshot = await getDocs(collection(firestore, this.USER_PLANS_COLLECTION));
+
+      const batch = writeBatch(firestore);
+      let updateCount = 0;
+
+      for (const docSnapshot of userPlansSnapshot.docs) {
+        const userId = docSnapshot.id;
+        const planData = docSnapshot.data();
+
+        // 이미 사용자 정보가 있으면 스킵
+        if (planData.userEmail || planData.userName) {
+          continue;
+        }
+
+        // 사용자 정보 가져오기
+        const userInfo = await this.getUserInfo(userId);
+
+        if (userInfo.email || userInfo.name) {
+          const updateData: any = {
+            updatedAt: Timestamp.now()
+          };
+
+          if (userInfo.email) updateData.userEmail = userInfo.email;
+          if (userInfo.name) updateData.userName = userInfo.name;
+          if (!planData.createdAt) updateData.createdAt = Timestamp.now();
+
+          batch.update(doc(firestore, this.USER_PLANS_COLLECTION, userId), updateData);
+          updateCount++;
+        }
+      }
+
+      if (updateCount > 0) {
+        await batch.commit();
+        console.log(`마이그레이션 완료: ${updateCount}개 사용자 플랜 업데이트됨`);
+      } else {
+        console.log('마이그레이션할 데이터가 없습니다.');
+      }
+    } catch (error) {
+      console.error('사용자 플랜 데이터 마이그레이션 실패:', error);
+      throw error;
+    }
+  }
 }
