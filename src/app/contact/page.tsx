@@ -87,25 +87,6 @@ export default function ContactPage() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Contact Info Cards */}
           <div className="lg:col-span-1 space-y-6">
-            <Card className="dark:bg-gray-900">
-              <CardHeader>
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-4">
-                  <Phone className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <CardTitle>전화 상담</CardTitle>
-                <CardDescription>
-                  평일 09:00 - 18:00
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  1588-0000
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  점심시간: 12:00 - 13:00
-                </p>
-              </CardContent>
-            </Card>
 
             <Card className="dark:bg-gray-900">
               <CardHeader>
@@ -119,10 +100,10 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  support@zipyojeong.com
+                  zipyojeonghelp@gmail.com
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  영업일 기준 24시간 내 답변
+                  영업일 2일 이내 답변
                 </p>
               </CardContent>
             </Card>
@@ -138,11 +119,11 @@ export default function ContactPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  @집요정
-                </p>
+                <a href="https://open.kakao.com/me/zipyojeonghelp" target="_blank" rel="noopener noreferrer" className="text-lg font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                  상담하기
+                </a>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  평일 09:00 - 18:00 운영
+                  평일 10:00 - 18:00 운영
                 </p>
               </CardContent>
             </Card>
@@ -157,16 +138,12 @@ export default function ContactPage() {
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">전화 상담</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">즉시 연결</span>
-                  </div>
-                  <div className="flex justify-between">
                     <span className="text-sm text-gray-600 dark:text-gray-400">이메일</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">24시간 이내</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">2일 이내</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600 dark:text-gray-400">카카오톡</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">30분 이내</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">1시간 이내</span>
                   </div>
                 </div>
               </CardContent>
@@ -344,12 +321,12 @@ export default function ContactPage() {
             <CardHeader>
               <CardTitle className="flex items-start">
                 <FileText className="w-5 h-5 mr-2 mt-0.5 text-blue-600 dark:text-blue-400" />
-                무료 체험은 어떻게 시작하나요?
+                웹과 앱을 모두 사용할 수 있나요?
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 dark:text-gray-400">
-                회원가입 후 별도의 결제 정보 없이 14일간 모든 기능을 무료로 체험할 수 있습니다.
+                네, 웹과 모바일 앱을 동일한 계정으로 사용할 수 있으며, 데이터는 실시간으로 동기화됩니다.
               </p>
             </CardContent>
           </Card>
@@ -358,12 +335,12 @@ export default function ContactPage() {
             <CardHeader>
               <CardTitle className="flex items-start">
                 <Building className="w-5 h-5 mr-2 mt-0.5 text-green-600 dark:text-green-400" />
-                여러 건물을 관리할 수 있나요?
+                AI 계약서 업로드는 어떻게 작동하나요?
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 dark:text-gray-400">
-                네, 모든 플랜에서 건물과 호수를 무제한으로 등록하고 관리할 수 있습니다.
+                계약서 사진 한 장만 업로드하면 AI가 자동으로 임차인 정보를 인식하고 등록해드립니다.
               </p>
             </CardContent>
           </Card>
@@ -372,12 +349,12 @@ export default function ContactPage() {
             <CardHeader>
               <CardTitle className="flex items-start">
                 <AlertCircle className="w-5 h-5 mr-2 mt-0.5 text-orange-600 dark:text-orange-400" />
-                데이터는 안전한가요?
+                가상계좌로 임대료를 받을 수 있나요?
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 dark:text-gray-400">
-                모든 데이터는 암호화되어 안전하게 보관되며, 정기적인 백업을 통해 데이터 손실을 방지합니다.
+                네, 가상계좌를 발급받아 임차인에게 전달하면 입금 시 자동으로 확인되고 알림을 받을 수 있습니다.
               </p>
             </CardContent>
           </Card>
@@ -386,12 +363,12 @@ export default function ContactPage() {
             <CardHeader>
               <CardTitle className="flex items-start">
                 <MessageSquare className="w-5 h-5 mr-2 mt-0.5 text-purple-600 dark:text-purple-400" />
-                앱은 어디서 다운로드하나요?
+                14일 무료체험 후에는 어떻게 되나요?
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 dark:text-gray-400">
-                구글 플레이스토어와 애플 앱스토어에서 &apos;집요정&apos;을 검색하여 다운로드할 수 있습니다.
+                체험 기간 종료 후 원하는 요금제를 선택하여 계속 사용하거나, 언제든 계정을 삭제할 수 있습니다.
               </p>
             </CardContent>
           </Card>

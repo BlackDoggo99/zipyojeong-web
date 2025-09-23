@@ -1,5 +1,6 @@
 import { doc, setDoc, getDoc, collection, query, where, getDocs, writeBatch, increment, Timestamp } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase';
+import { User } from 'firebase/auth';
 
 export type SubscriptionPlan = 'free' | 'starter' | 'basic' | 'standard' | 'pro' | 'proplus' | 'enterprise';
 
@@ -7,6 +8,10 @@ export interface SubscriptionModel {
   plan: SubscriptionPlan;
   expiryDate: Date | null;
   isActive: boolean;
+  userEmail?: string;
+  userName?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface PlanDisplayInfo {
@@ -17,6 +22,24 @@ export interface PlanDisplayInfo {
 
 export class PlanService {
   private static readonly USER_PLANS_COLLECTION = 'user_plans';
+
+  // 사용자 정보 가져오기 (Users 컬렉션에서)
+  private static async getUserInfo(userId: string): Promise<{ email?: string; name?: string }> {
+    try {
+      const userDoc = await getDoc(doc(firestore, 'users', userId));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        return {
+          email: userData.email,
+          name: userData.name || userData.displayName
+        };
+      }
+      return {};
+    } catch (error) {
+      console.error('사용자 정보 조회 실패:', error);
+      return {};
+    }
+  }
 
   // 플랜별 정보 정의
   static getPlanInfo(plan: SubscriptionPlan): PlanDisplayInfo {
@@ -56,10 +79,14 @@ export class PlanService {
       }
 
       // 플랜이 없으면 무료 플랜으로 생성
+      const userInfo = await this.getUserInfo(userId);
       const freePlan: SubscriptionModel = {
         plan: 'free',
         expiryDate: null,
-        isActive: true
+        isActive: true,
+        userEmail: userInfo.email,
+        userName: userInfo.name,
+        createdAt: new Date()
       };
 
       await this.setUserPlan(userId, freePlan);
@@ -73,11 +100,19 @@ export class PlanService {
   // 사용자 플랜 설정
   static async setUserPlan(userId: string, subscription: SubscriptionModel): Promise<void> {
     try {
-      await setDoc(doc(firestore, this.USER_PLANS_COLLECTION, userId), {
+      const updateData: any = {
         plan: subscription.plan,
         expiryDate: subscription.expiryDate?.toISOString() || null,
-        isActive: subscription.isActive
-      });
+        isActive: subscription.isActive,
+        updatedAt: Timestamp.now()
+      };
+
+      // 사용자 정보가 있으면 추가
+      if (subscription.userEmail) updateData.userEmail = subscription.userEmail;
+      if (subscription.userName) updateData.userName = subscription.userName;
+      if (subscription.createdAt) updateData.createdAt = Timestamp.fromDate(subscription.createdAt);
+
+      await setDoc(doc(firestore, this.USER_PLANS_COLLECTION, userId), updateData, { merge: true });
       console.log('사용자 플랜 업데이트 완료:', userId, subscription.plan);
     } catch (error) {
       console.error('사용자 플랜 업데이트 실패:', error);
@@ -100,10 +135,14 @@ export class PlanService {
   // 플랜 할당
   static async assignPlanToUser(userId: string, plan: SubscriptionPlan, expiryDate: Date | null = null, isActive: boolean = true): Promise<void> {
     try {
+      const userInfo = await this.getUserInfo(userId);
       const subscription: SubscriptionModel = {
         plan,
         expiryDate,
-        isActive
+        isActive,
+        userEmail: userInfo.email,
+        userName: userInfo.name,
+        createdAt: new Date()
       };
 
       await this.setUserPlan(userId, subscription);
@@ -139,6 +178,9 @@ export class PlanService {
       const duration = billingCycle === 'monthly' ? 30 : 365;
       const expiryDate = new Date(Date.now() + duration * 24 * 60 * 60 * 1000);
 
+      // 사용자 정보 가져오기
+      const userInfo = await this.getUserInfo(userId);
+
       const batch = writeBatch(firestore);
 
       // 포인트 차감
@@ -154,8 +196,11 @@ export class PlanService {
       batch.set(planRef, {
         plan: planId,
         expiryDate: expiryDate.toISOString(),
-        isActive: true
-      });
+        isActive: true,
+        userEmail: userInfo.email,
+        userName: userInfo.name,
+        updatedAt: Timestamp.now()
+      }, { merge: true });
 
       // 구매 기록 저장
       const purchaseLogRef = doc(collection(firestore, 'point_purchases'));

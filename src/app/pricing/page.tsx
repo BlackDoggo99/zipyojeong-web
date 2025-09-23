@@ -30,11 +30,10 @@ const plans = [
     color: 'blue',
     features: [
       '건물/호수 무제한 등록',
-      '계약서 업로드 (PDF/사진)',
+      'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '은행 API 자동 입금 확인',
-      '카톡/문자 자동 알림',
+      '가상계좌 발급/자동 입금 확인',
       '세금 신고용 장부 생성'
     ],
     popular: false
@@ -49,11 +48,10 @@ const plans = [
     color: 'green',
     features: [
       '건물/호수 무제한 등록',
-      '계약서 업로드 (PDF/사진)',
+      'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '은행 API 자동 입금 확인',
-      '카톡/문자 자동 알림',
+      '가상계좌 발급/자동 입금 확인',
       '세금 신고용 장부 생성'
     ],
     popular: true
@@ -68,11 +66,10 @@ const plans = [
     color: 'purple',
     features: [
       '건물/호수 무제한 등록',
-      '계약서 업로드 (PDF/사진)',
+      'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '은행 API 자동 입금 확인',
-      '카톡/문자 자동 알림',
+      '가상계좌 발급/자동 입금 확인',
       '세금 신고용 장부 생성'
     ],
     popular: false
@@ -87,11 +84,10 @@ const plans = [
     color: 'orange',
     features: [
       '건물/호수 무제한 등록',
-      '계약서 업로드 (PDF/사진)',
+      'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '은행 API 자동 입금 확인',
-      '카톡/문자 자동 알림',
+      '가상계좌 발급/자동 입금 확인',
       '세금 신고용 장부 생성'
     ],
     popular: false
@@ -107,11 +103,10 @@ const plans = [
     color: 'indigo',
     features: [
       '건물/호수 무제한 등록',
-      '계약서 업로드 (PDF/사진)',
+      'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '은행 API 자동 입금 확인',
-      '카톡/문자 자동 알림',
+      '가상계좌 발급/자동 입금 확인',
       '세금 신고용 장부 생성'
     ],
     popular: false
@@ -223,7 +218,7 @@ export default function PricingPage() {
                     <Icon className={`w-6 h-6 text-${plan.color}-600 dark:text-${plan.color}-400`} />
                   </div>
                   <CardTitle className="text-xl">{plan.name}</CardTitle>
-                  <CardDescription className="text-xs mt-1">
+                  <CardDescription className="text-xs mt-1 text-gray-900 dark:text-gray-400">
                     {plan.description}
                   </CardDescription>
                 </CardHeader>
@@ -232,9 +227,9 @@ export default function PricingPage() {
                   <div className="mb-6">
                     <div className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                       {plan.tenantNumber}
-                      <span className="text-2xl font-normal text-gray-600 dark:text-gray-400">명</span>
+                      <span className="text-2xl font-normal text-gray-900 dark:text-gray-400">명</span>
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    <div className="text-sm text-gray-900 dark:text-gray-400 mb-4">
                       세입자 관리 가능 인원
                     </div>
                     {!plan.enterprise ? (
@@ -246,14 +241,14 @@ export default function PricingPage() {
                           }
                         </div>
                         {plan.additionalPrice && (
-                          <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <div className="text-sm text-gray-900 dark:text-gray-400 mt-1">
                             {billingCycle === 'monthly' ?
                               '+ 10명당 ₩19,900/월' :
                               `+ 10명당 ₩${getAdditionalYearlyPrice()}/년`
                             }
                           </div>
                         )}
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                        <div className="text-sm text-gray-900 dark:text-gray-400">
                           {billingCycle === 'monthly' ? '/월' : '/년'}
                         </div>
                         {billingCycle === 'yearly' && !plan.enterprise && (
@@ -274,7 +269,7 @@ export default function PricingPage() {
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-start">
                         <Check className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                        <span className="text-xs text-gray-600 dark:text-gray-400">
+                        <span className="text-xs text-gray-900 dark:text-gray-400">
                           {feature}
                         </span>
                       </li>
@@ -350,7 +345,7 @@ export default function PricingPage() {
                 <td className="p-4 font-medium text-gray-900 dark:text-gray-100" colSpan={7}>기본 기능</td>
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-600 dark:text-gray-400">건물/호수 등록</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">건물/호수 등록</td>
                 <td className="text-center p-4">
                   <Check className="w-5 h-5 text-green-500 mx-auto" />
                 </td>
@@ -361,7 +356,7 @@ export default function PricingPage() {
                 ))}
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-600 dark:text-gray-400">계약서 업로드</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">계약서 업로드</td>
                 <td className="text-center p-4">
                   <Check className="w-5 h-5 text-green-500 mx-auto" />
                 </td>
@@ -372,7 +367,7 @@ export default function PricingPage() {
                 ))}
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-600 dark:text-gray-400">월세 수동 체크</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">월세 수동 체크</td>
                 <td className="text-center p-4">
                   <Check className="w-5 h-5 text-green-500 mx-auto" />
                 </td>
@@ -383,7 +378,7 @@ export default function PricingPage() {
                 ))}
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-600 dark:text-gray-400">계약 만료 알림</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">계약 만료 알림</td>
                 <td className="text-center p-4">
                   <Check className="w-5 h-5 text-green-500 mx-auto" />
                 </td>
@@ -394,7 +389,7 @@ export default function PricingPage() {
                 ))}
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-600 dark:text-gray-400">세입자별 메모</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">세입자별 메모</td>
                 <td className="text-center p-4">
                   <Check className="w-5 h-5 text-green-500 mx-auto" />
                 </td>
@@ -408,7 +403,7 @@ export default function PricingPage() {
                 <td className="p-4 font-medium text-gray-900 dark:text-gray-100" colSpan={7}>프리미엄 기능</td>
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-600 dark:text-gray-400">은행 API 자동 입금 확인</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">은행 API 자동 입금 확인</td>
                 <td className="text-center p-4">
                   <X className="w-5 h-5 text-gray-300 dark:text-gray-600 mx-auto" />
                 </td>
@@ -419,7 +414,7 @@ export default function PricingPage() {
                 ))}
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-600 dark:text-gray-400">월세 자동 리마인드</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">가상계좌 자동 알림</td>
                 <td className="text-center p-4">
                   <X className="w-5 h-5 text-gray-300 dark:text-gray-600 mx-auto" />
                 </td>
@@ -430,7 +425,7 @@ export default function PricingPage() {
                 ))}
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-600 dark:text-gray-400">세금/회계 리포트</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">세금 신고용 장부</td>
                 <td className="text-center p-4">
                   <X className="w-5 h-5 text-gray-300 dark:text-gray-600 mx-auto" />
                 </td>
@@ -441,7 +436,7 @@ export default function PricingPage() {
                 ))}
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-600 dark:text-gray-400">하자/민원 카톡 챗봇</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">민원 처리 자동화</td>
                 <td className="text-center p-4">
                   <X className="w-5 h-5 text-gray-300 dark:text-gray-600 mx-auto" />
                 </td>
@@ -452,7 +447,7 @@ export default function PricingPage() {
                 ))}
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-600 dark:text-gray-400">AI 챗봇 고객지원</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">24/7 AI 지원</td>
                 <td className="text-center p-4">
                   <X className="w-5 h-5 text-gray-300 dark:text-gray-600 mx-auto" />
                 </td>
@@ -480,31 +475,30 @@ export default function PricingPage() {
                 <CardTitle className="text-lg">무료 체험이 가능한가요?</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 dark:text-gray-400">
-                  네, 모든 플랜은 14일 무료 체험이 가능합니다. 신용카드 등록 없이 바로 시작할 수 있습니다.
+                <p className="text-gray-900 dark:text-gray-400">
+                  네, 모든 플랜은 14일 무료 체험이 가능합니다. 웹에서 간단히 회원가입 후 바로 사용할 수 있으며, 체험 기간 중 언제든 계정을 삭제할 수 있습니다.
                 </p>
               </CardContent>
             </Card>
 
             <Card className="dark:bg-gray-900">
               <CardHeader>
-                <CardTitle className="text-lg">플랜 변경이 가능한가요?</CardTitle>
+                <CardTitle className="text-lg">웹과 앱이 따로 있나요?</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 dark:text-gray-400">
-                  언제든지 상위 플랜으로 업그레이드하거나 하위 플랜으로 다운그레이드할 수 있습니다. 
-                  변경된 요금은 다음 결제일부터 적용됩니다.
+                <p className="text-gray-900 dark:text-gray-400">
+                  웹 뺄전과 모바일 앱을 모두 제공합니다. 웹에서 가입 후 동일한 계정으로 양쪽에서 모두 사용 가능하며, 데이터는 실시간으로 동기화됩니다.
                 </p>
               </CardContent>
             </Card>
 
             <Card className="dark:bg-gray-900">
               <CardHeader>
-                <CardTitle className="text-lg">환불 정책은 어떻게 되나요?</CardTitle>
+                <CardTitle className="text-lg">결제는 어떻게 하나요?</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 dark:text-gray-400">
-                  첫 30일 이내에는 100% 환불이 가능합니다. 이후에는 남은 기간에 대해 일할 계산하여 환불해드립니다.
+                <p className="text-gray-900 dark:text-gray-400">
+                  웹에서 카드 결제 또는 가상계좌 이체로 결제가 가능합니다. 첫 결제 후 매월 자동 결제되며, 언제든 결제 취소가 가능합니다.
                 </p>
               </CardContent>
             </Card>
@@ -520,7 +514,7 @@ export default function PricingPage() {
             14일 무료 체험으로 시작하세요
           </h2>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-            신용카드 등록 없이 모든 기능을 체험해보세요
+            웹에서 간편 가입으로 14일간 모든 기능을 무료로 체험해보세요
           </p>
           <Link href="/signup">
             <Button size="lg" variant="secondary" className="px-8 py-4 text-lg">

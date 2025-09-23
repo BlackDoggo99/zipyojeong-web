@@ -37,7 +37,7 @@ export default function PrivacyPage() {
               <section>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">1. 개인정보의 처리 목적</h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-                  라이프컴포트(Life Comfort)(&quot;https://zipyojeong-web.vercel.app&quot; 이하 &quot;집요정&quot;)은 다음의 목적을 위하여 개인정보를 처리하고 있으며, 다음의 목적 이외의 용도로는 이용하지 않습니다.
+                  라이프컴포트(Life Comfort)(&quot;https://zipyojeong.vercel.app&quot; 이하 &quot;집요정&quot;)은 다음의 목적을 위하여 개인정보를 처리하고 있으며, 다음의 목적 이외의 용도로는 이용하지 않습니다.
                 </p>
                 <ul className="space-y-2 ml-4 text-gray-700 dark:text-gray-300">
                   <li>• 회원 가입 의사 확인, 회원제 서비스 제공에 따른 본인 식별·인증</li>
