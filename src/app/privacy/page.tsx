@@ -42,7 +42,7 @@ export default function PrivacyPage() {
                 <ul className="space-y-2 ml-4 text-gray-700 dark:text-gray-300">
                   <li>• 회원 가입 의사 확인, 회원제 서비스 제공에 따른 본인 식별·인증</li>
                   <li>• 임대 관리 서비스 제공 (임차인 정보 관리, 임대료 납부 관리, 주소 관리)</li>
-                  <li>• PG사 연동 결제 서비스 제공 및 가상계좌 발급</li>
+                  <li>• PG사 연동 결제 서비스 제공</li>
                   <li>• 본인인증 서비스 제공</li>
                   <li>• 고객 상담 및 민원 처리, 공지사항 전달</li>
                   <li>• 서비스 이용 통계 분석 및 서비스 개선</li>
@@ -96,7 +96,7 @@ export default function PrivacyPage() {
                     <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">③ 결제 서비스 제공</h3>
                     <ul className="ml-4 space-y-1 text-gray-700 dark:text-gray-300">
                       <li>• 결제 정보: 카드번호, 유효기간, CVC, 카드소유자명</li>
-                      <li>• 계좌 정보: 은행명, 계좌번호, 예금주명 (가상계좌 발급 시)</li>
+                      <li>• 계좌 정보: 은행명, 계좌번호, 예금주명 (문자 기반 입금 인식 기능 사용 시)</li>
                       <li>• 본인인증 정보: 이름, 생년월일, 성별, 휴대폰번호, 통신사</li>
                     </ul>
                   </div>
@@ -132,9 +132,9 @@ export default function PrivacyPage() {
                     <div>
                       <h4 className="font-medium text-gray-800 dark:text-gray-200">• PG사 (결제 서비스 제공업체)</h4>
                       <ul className="ml-4 space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                        <li>- 제공받는 자: 제휴 PG사</li>
-                        <li>- 제공 목적: 결제 처리, 가상계좌 발급, 본인인증</li>
-                        <li>- 제공 항목: 결제정보, 본인인증정보, 가상계좌 정보</li>
+                        <li>- 제공받는 자: (주)KG이니시스</li>
+                        <li>- 제공 목적: 결제 처리, 본인인증</li>
+                        <li>- 제공 항목: 결제정보, 본인인증정보</li>
                         <li>- 보유 기간: 결제 완료 후 법정 보존 기간</li>
                       </ul>
                     </div>
@@ -232,7 +232,8 @@ export default function PrivacyPage() {
                   <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
                     <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2">▶ 개인정보 보호책임자</h4>
                     <ul className="space-y-1 text-gray-700 dark:text-gray-300">
-                      <li>성명: 집요정 개발팀</li>
+                      <li>성명: 이정관</li>
+                      <li>직위: 대표</li>
                       <li>연락처: zipyojeonghelp@gmail.com</li>
                     </ul>
                   </div>
@@ -249,7 +250,7 @@ export default function PrivacyPage() {
                     이 개인정보처리방침은 시행일로부터 적용되며, 법령 및 방침에 따른 변경내용의 추가, 삭제 및 정정이 있는 경우에는 변경사항의 시행 7일 전부터 공지사항을 통하여 고지할 것입니다.
                   </p>
                   <p className="font-medium">
-                    이 개인정보 처리방침은 2025년 1월 1일부터 시행됩니다.
+                    이 개인정보 처리방침은 2025년 10월 1일부터 시행됩니다.
                   </p>
                 </div>
               </section>
