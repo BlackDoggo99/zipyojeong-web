@@ -2,10 +2,7 @@
 
 // admin/plans/page.tsx - 임시 비활성화 버전
 
-// admin/plans/page.tsx - 임시 비활성화 버전
-
 export default function AdminPlansPage() {
-  // 빈 div만 반환, 모든 JSX와 로직 제거
   return <div></div>;
 }
 
