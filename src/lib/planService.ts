@@ -2,7 +2,7 @@ import { doc, setDoc, getDoc, collection, query, where, getDocs, writeBatch, inc
 import { firestore } from '@/lib/firebase';
 import { User } from 'firebase/auth';
 
-export type SubscriptionPlan = 'free' | 'starter' | 'basic' | 'standard' | 'pro' | 'proplus' | 'enterprise';
+export type SubscriptionPlan = 'free' | 'starter' | 'basic' | 'standard' | 'pro' | 'proplus' | 'enterprise' | 'admin';
 
 export interface SubscriptionModel {
   plan: SubscriptionPlan;
@@ -68,6 +68,8 @@ export class PlanService {
         return { name: '프로 플러스', tenantLimit: 50, hasPremiumAccess: true }; // 50명 이상 + 추가 가능
       case 'enterprise':
         return { name: '엔터프라이즈', tenantLimit: -1, hasPremiumAccess: true }; // 관리자와 협의 후 지정
+      case 'admin':
+        return { name: '관리자', tenantLimit: -1, hasPremiumAccess: true };
       default:
         return { name: '무료 플랜', tenantLimit: 5, hasPremiumAccess: false };
     }
@@ -81,14 +83,31 @@ export class PlanService {
 
       if (docSnap.exists()) {
         const data = docSnap.data();
+        let expiryDate: Date | null = null;
+        if (data.expiryDate) {
+          if (typeof data.expiryDate === 'string') {
+            // 1. ISO 문자열로 저장된 경우 (현재 setUserPlan에서 사용)
+            expiryDate = new Date(data.expiryDate);
+          } else if (data.expiryDate.toDate) {
+            // 2. Firestore Timestamp로 저장된 경우 (과거 데이터 또는 다른 로직에서 사용)
+            expiryDate = data.expiryDate.toDate();
+          } else if (data.expiryDate instanceof Date) {
+            // 3. 이미 Date 객체인 경우 (안전성 확보)
+            expiryDate = data.expiryDate;
+          }
+        }
         return {
           plan: data.plan || 'free',
-          expiryDate: data.expiryDate ? new Date(data.expiryDate) : null,
+          // expiryDate: data.expiryDate ? new Date(data.expiryDate) : null, //  기존 코드 삭제
+          expiryDate: expiryDate, //  수정된 변수로 대체
           isActive: data.isActive ?? true
         };
       }
 
       // 플랜이 없으면 무료 플랜으로 생성
+      return { plan: 'free', expiryDate: null, isActive: true };
+      
+      /* // ⚠️⚠️⚠️ 기존에 무료 플랜을 Firestore에 저장하던 로직은 제거하는 것을 권장합니다.
       const userInfo = await this.getUserInfo(userId);
       const freePlan: SubscriptionModel = {
         plan: 'free',
@@ -98,9 +117,9 @@ export class PlanService {
         userName: userInfo.name,
         createdAt: new Date()
       };
-
       await this.setUserPlan(userId, freePlan);
       return freePlan;
+      */
     } catch (error) {
       console.error('사용자 플랜 조회 실패:', error);
       return { plan: 'free', expiryDate: null, isActive: true };
