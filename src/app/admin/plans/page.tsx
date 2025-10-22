@@ -2,17 +2,18 @@
 
 // admin/plans/page.tsx - 임시 비활성화 버전
 
+// admin/plans/page.tsx - 임시 비활성화 버전
+
 export default function AdminPlansPage() {
-  return (
-    <div>
-      {/* 
-        원래 AdminPlansPage 컴포넌트 내용은 미완성 상태라 빌드 에러 발생.
-        모든 JSX와 로직을 주석 처리하고 빈 div로 대체했습니다.
-        나중에 admin 기능 개발 시 주석을 해제하고 로직 복원 가능.
-      */}
-    </div>
-  );
+  // 빈 div만 반환, 모든 JSX와 로직 제거
+  return <div></div>;
 }
+
+/*
+원래 AdminPlansPage 내용 전체를 주석 처리했습니다.
+추후 admin 기능을 개발할 때 주석을 해제하고 복원 가능.
+*/
+      
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
