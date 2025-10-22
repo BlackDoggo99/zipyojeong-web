@@ -500,7 +500,7 @@ export default function PricingPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-900 dark:text-gray-400">
-                  웹에서 다양한 방법로 결제가 가능합니다.
+                  웹에서 PG사를 통한 다양한 방법으로 결제가 가능하게 제공중입니다.
                 </p>
               </CardContent>
             </Card>
