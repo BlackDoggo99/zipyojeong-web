@@ -286,11 +286,12 @@ export default function DashboardPage() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="flex-1 border-white text-white hover:bg-white hover:text-blue-600"
+                  className="flex-1 border-white text-white hover:bg-white hover:text-blue-600 opacity-75 cursor-not-allowed"
                   onClick={handleDownloadApp}
+                  disabled
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  iOS 앱 다운로드
+                  iOS 앱 준비중입니다.
                 </Button>
               </div>
             </CardContent>
