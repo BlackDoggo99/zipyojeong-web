@@ -227,7 +227,7 @@ export default function HomePage() {
               </Button>
             </Link>
             <Link href="/pricing">
-              <Button size="lg" variant="outline" className="px-8 py-4 text-lg border-white hover:bg-white hover:text-blue-600">
+              <Button size="lg" variant="outline" className="px-8 py-4 text-lg border-white text-white dark:text-white hover:bg-white hover:text-blue-600">
                 요금제 보기
               </Button>
             </Link>
