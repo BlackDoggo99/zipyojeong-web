@@ -1,3 +1,4 @@
+//임시 비활성화 시킴.
 /*'use client';
 
 import { useState } from 'react';
