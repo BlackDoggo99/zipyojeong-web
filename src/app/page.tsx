@@ -266,6 +266,7 @@ export default function HomePage() {
                 <li><Link href="/help" className="hover:text-white transition-colors">도움말</Link></li>
                 <li><Link href="/contact" className="hover:text-white transition-colors">문의하기</Link></li>
                 <li><Link href="/faq" className="hover:text-white transition-colors">자주 묻는 질문</Link></li>
+                <li><Link href="/account-deletion" className="hover:text-white transition-colors">계정 삭제</Link></li>
               </ul>
             </div>
             
