@@ -33,7 +33,7 @@ const plans = [
       'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '가상계좌 발급/자동 입금 확인',
+      '자동 입금 확인',
       '세금 신고용 장부 생성'
     ],
     popular: false
@@ -51,7 +51,7 @@ const plans = [
       'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '가상계좌 발급/자동 입금 확인',
+      '자동 입금 확인',
       '세금 신고용 장부 생성'
     ],
     popular: true
@@ -69,7 +69,7 @@ const plans = [
       'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '가상계좌 발급/자동 입금 확인',
+      '자동 입금 확인',
       '세금 신고용 장부 생성'
     ],
     popular: false
@@ -87,7 +87,7 @@ const plans = [
       'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '가상계좌 발급/자동 입금 확인',
+      '자동 입금 확인',
       '세금 신고용 장부 생성'
     ],
     popular: false
@@ -106,7 +106,7 @@ const plans = [
       'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '가상계좌 발급/자동 입금 확인',
+      '자동 입금 확인',
       '세금 신고용 장부 생성'
     ],
     popular: false
@@ -121,7 +121,7 @@ const plans = [
     color: 'gray',
     features: [
       '모든 프로 플러스 기능',
-      '가상계좌 발급/자동 입금 확인',
+      '자동 입금 확인',
       'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '전용 서버 옵션',
       'White Label 브랜딩',
@@ -141,13 +141,13 @@ export default function PricingPage() {
   const getDiscountedPrice = (price: string) => {
     if (price === '협의') return price;
     const numPrice = parseInt(price.replace(/,/g, ''));
-    const yearlyPrice = Math.floor(numPrice * 12 * 0.85); // 15% 할인
+    const yearlyPrice = Math.floor(numPrice * 12 * 0.88); // 12% 할인
     return yearlyPrice.toLocaleString();
   };
 
   const getAdditionalYearlyPrice = () => {
     const monthlyPrice = 19900;
-    const yearlyPrice = Math.floor(monthlyPrice * 12 * 0.85); // 15% 할인
+    const yearlyPrice = Math.floor(monthlyPrice * 12 * 0.88); // 15% 할인
     return yearlyPrice.toLocaleString();
   };
 
@@ -188,7 +188,7 @@ export default function PricingPage() {
             </button>
             <span className={`text-sm ${billingCycle === 'yearly' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400'}`}>
               연간 결제
-              <Badge variant="secondary" className="ml-2">15% 할인</Badge>
+              <Badge variant="secondary" className="ml-2">12% 할인</Badge>
             </span>
           </div>
         </div>
@@ -405,7 +405,7 @@ export default function PricingPage() {
                 <td className="p-4 font-medium text-gray-900 dark:text-gray-100" colSpan={7}>프리미엄 기능</td>
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-900 dark:text-gray-400">은행 API 자동 입금 확인</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">문자 인식 자동 입금 확인</td>
                 <td className="text-center p-4">
                   <X className="w-5 h-5 text-gray-300 dark:text-gray-600 mx-auto" />
                 </td>
@@ -416,7 +416,7 @@ export default function PricingPage() {
                 ))}
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-900 dark:text-gray-400">가상계좌 자동 알림</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">AI 기반 자동 세입자 등록</td>
                 <td className="text-center p-4">
                   <X className="w-5 h-5 text-gray-300 dark:text-gray-600 mx-auto" />
                 </td>
@@ -438,7 +438,7 @@ export default function PricingPage() {
                 ))}
               </tr>
               <tr className="border-b dark:border-gray-800">
-                <td className="p-4 text-gray-900 dark:text-gray-400">민원 처리 자동화</td>
+                <td className="p-4 text-gray-900 dark:text-gray-400">특약사항 요약 알림</td>
                 <td className="text-center p-4">
                   <X className="w-5 h-5 text-gray-300 dark:text-gray-600 mx-auto" />
                 </td>
@@ -489,7 +489,7 @@ export default function PricingPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-900 dark:text-gray-400">
-                  웹 뺄전과 모바일 앱을 모두 제공합니다. 웹에서 가입 후 동일한 계정으로 양쪽에서 모두 사용 가능하며, 데이터는 실시간으로 동기화됩니다.
+                  웹에서 가입 후 모바일에서 사용 가능하며, 웹 버전은 추후 개발 예정입니다. 현재 웹에서 구독관련 관리가 가능합니다. 데이터는 실시간으로 동기화됩니다.
                 </p>
               </CardContent>
             </Card>
@@ -500,7 +500,7 @@ export default function PricingPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-900 dark:text-gray-400">
-                  웹에서 카드 결제 또는 가상계좌 이체로 결제가 가능합니다. 첫 결제 후 매월 자동 결제되며, 언제든 결제 취소가 가능합니다.
+                  웹에서 다양한 방법로 결제가 가능합니다.
                 </p>
               </CardContent>
             </Card>
