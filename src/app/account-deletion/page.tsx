@@ -170,7 +170,7 @@ export default function AccountDeletionPage() {
                     계정 삭제 관련 문의나 도움이 필요하신 경우 고객지원팀으로 연락주세요.
                   </p>
                   <p className="text-gray-600 dark:text-gray-400">
-                    📧 이메일: <a href="mailto:support@zipyojeong.com" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">support@zipyojeong.com</a>
+                    📧 이메일: <a href="mailto:support@zipyojeong.com" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">zipyojeonghelp@gmail.com</a>
                   </p>
                   <p className="text-gray-500 dark:text-gray-500 text-sm mt-2">
                     * 계정 삭제 요청은 영업일 기준 7일 이내에 처리됩니다.
