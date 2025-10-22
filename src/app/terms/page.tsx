@@ -37,7 +37,7 @@ export default function TermsPage() {
               <section>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">제1조 (목적)</h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  이 약관은 라이프컴포트(Life Comfort)(이하 &quot;회사&quot;)이 제공하는 집요정 임대 관리 서비스(이하 &quot;서비스&quot;)의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.
+                  이 약관은 라이프컴포트(Life Comfort)(이하 &quot;회사&quot;)가 제공하는 집요정 임대 관리 서비스(이하 &quot;서비스&quot;)의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.
                 </p>
               </section>
 
@@ -54,10 +54,10 @@ export default function TermsPage() {
                     2. &quot;이용자&quot;란 이 약관에 따라 회사가 제공하는 서비스를 받는 회원 및 비회원을 말합니다.
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
-                    3. &quot;회원&quot;란 회사에 개인정보를 제공하여 회원등록을 한 자로서, 회사의 정보를 지속적으로 제공받으며 회사가 제공하는 서비스를 계속적으로 이용할 수 있는 자를 말합니다.
+                    3. &quot;회원&quot;이란 회사에 개인정보를 제공하여 회원등록을 한 자로서, 회사의 정보를 지속적으로 제공받으며 회사가 제공하는 서비스를 계속적으로 이용할 수 있는 자를 말합니다.
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
-                    4. &quot;비회원&quot;란 회원에 가입하지 않고 회사가 제공하는 무료 체험 서비스를 이용하는 자를 말합니다.
+                    4. &quot;비회원&quot;이란 회원에 가입하지 않고 회사가 제공하는 무료 체험 서비스를 이용하는 자를 말합니다.
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
                     5. &quot;임대 데이터&quot;란 이용자가 서비스 이용 과정에서 입력하는 임차인 정보, 임대료 정보, 계약 정보, 주소 정보 등을 말합니다.
@@ -92,6 +92,7 @@ export default function TermsPage() {
                       <li>• 임차인 기본 정보 등록 및 관리</li>
                       <li>• 계약 정보 및 납부 조건 관리</li>
                       <li>• 주소 정보 관리</li>
+                      <li>• 임대차 계약서 등록 및 관리</li>
                     </ul>
                   </div>
                   <div>
@@ -100,8 +101,6 @@ export default function TermsPage() {
                       <li>• 임대료 납부 기록 관리</li>
                       <li>• 납부 일정 및 연체 관리</li>
                       <li>• 자동 알림 서비스</li>
-                      <li>• PG사 연동 결제 서비스</li>
-                      <li>• 가상계좌 발급 및 자동 입금 처리</li>
                     </ul>
                   </div>
                   <div>
@@ -109,7 +108,7 @@ export default function TermsPage() {
                     <ul className="ml-4 space-y-1 text-gray-700 dark:text-gray-300">
                       <li>• 월별, 연간 수익 리포트</li>
                       <li>• 납부 현황 통계</li>
-                      <li>• 엑셀/PDF 내보내기</li>
+                      <li>• 엑셀/PDF 장부 내보내기</li>
                     </ul>
                   </div>
                   <div>
@@ -139,7 +138,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">제5조 (회원가입)</h2>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">제5조 (회원가입 및 계정 관리)</h2>
                 <div className="space-y-3 ml-4">
                   <p className="text-gray-700 dark:text-gray-300">
                     1. 이용자는 회사가 정한 가입 양식에 따라 회원정보를 기입한 후 이 약관에 동의한다는 의사표시를 함으로써 회원가입을 신청합니다.
@@ -174,10 +173,7 @@ export default function TermsPage() {
                     4. 회원이 이용료를 납부하지 않을 경우, 회사는 서비스 제공을 중단할 수 있습니다.
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
-                    5. 임차인 임대료 납부를 위한 가상계좌 발급 및 이체 서비스는 제휴 PG사를 통해 제공되며, 관련 수수료가 발생할 수 있습니다.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    6. 환불 정책은 별도로 정한 환불 규정에 따릅니다.
+                    5. 환불 정책은 별도로 정한 환불 규정에 따릅니다.
                   </p>
                 </div>
               </section>
@@ -241,7 +237,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">제10조 (손해배상)</h2>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">제10조 (손해배상 및 면책조)</h2>
                 <div className="space-y-3 ml-4">
                   <p className="text-gray-700 dark:text-gray-300">
                     1. 회사는 무료로 제공되는 서비스와 관련하여 회원에게 어떠한 손해가 발생하더라도 동 손해가 회사의 고의 또는 중대한 과실에 의한 경우를 제외하고 이에 대하여 책임을 부담하지 아니합니다.
@@ -251,6 +247,12 @@ export default function TermsPage() {
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
                     3. 회사는 천재지변 또는 이에 준하는 불가항력으로 인하여 서비스를 제공할 수 없는 경우에는 서비스 제공에 관한 책임이 면제됩니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    4. 회사는 이용자 간 또는 이용자와 제3자 간 발생한 분쟁에 개입하지 않습니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    5. 회사는 이용자가 제공한 정보의 정확성에 대해 보증하지 않습니다.
                   </p>
                 </div>
               </section>
@@ -268,9 +270,76 @@ export default function TermsPage() {
               </section>
 
               <section>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">제12조 (서비스 제공 기간)</h2>
+                <div className="space-y-3 ml-4">
+                  <p className="text-gray-700 dark:text-gray-300">
+                    1. 회사는 이용자가 결제한 시점부터 해당 유료 구독기간(1개월, 1년 등) 동안 서비스를 제공합니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    2. 서비스 제공은 회원 계정으로 로그인한 순간부터 즉시 개시됩니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    3. 무료 체험기간이 제공되는 경우, 체험기간 종료 후 자동으로 유료 결제 전환이 이루어질 수 있습니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    4. 서비스 제공 기간 중 시스템 점검, 천재지변 등 불가피한 사유로 일시 중단될 수 있으며, 회사는 사전 또는 사후에 공지합니다.
+                  </p>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">제13조 (배송에 관한 사항)</h2>
+                <div className="space-y-3 ml-4">
+                  <p className="text-gray-700 dark:text-gray-300">
+                    1. 본 서비스는 디지털 형태의 온라인 콘텐츠로서 별도의 물리적 상품 배송은 이루어지지 않습니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    2. 이용자는 회원가입 및 결제 완료 후 즉시 서비스를 이용할 수 있습니다.
+                  </p>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">제14조 (결제 취소 및 환불 정책)</h2>
+                <div className="space-y-3 ml-4">
+                  <p className="text-gray-700 dark:text-gray-300">
+                    1. 이용자가 결제를 완료한 이후, 서비스 특성상 이용이 개시된 경우 환불이 제한될 수 있습니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300 mb-2">
+                    2. 단, 다음의 경우에는 전액 환불이 가능합니다.
+                  </p>
+                  <ul className="ml-4 space-y-1 text-gray-700 dark:text-gray-300">
+                    <li>• 결제 후 7일 이내에 서비스에 접속하지 않은 경우</li>
+                    <li>• 시스템 오류 또는 회사의 귀책사유로 인해 정상적인 이용이 불가능한 경우</li>
+                  </ul>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    3. 부분 환불 또는 잔여 기간 환불은 회사의 정책에 따라 산정됩니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    4. 결제 취소 및 환불 요청은 고객센터(이메일: zipyojeonghelp@gmail.com)를 통해 가능합니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    5. 환불 시 PG사(결제대행사)의 수수료가 발생할 경우, 해당 비용은 이용자가 부담할 수 있습니다.
+                  </p>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">제15조 (교환 정책)</h2>
+                <div className="space-y-3 ml-4">
+                  <p className="text-gray-700 dark:text-gray-300">
+                    1. 본 서비스는 무형의 디지털 콘텐츠로, 물리적인 교환 개념이 존재하지 않습니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300 mb-2">
+                    2. 단, 동일 계정 내 구독 등급 변경(업그레이드/다운그레이드)은 회사의 정책에 따라 가능합니다.
+                  </p>
+                </div>
+              </section>
+              
+              <section>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">부칙</h2>
                 <p className="text-gray-700 dark:text-gray-300">
-                  이 약관은 2025년 1월 1일부터 시행됩니다.
+                  이 약관은 2025년 10월 1일부터 시행됩니다.
                 </p>
               </section>
 
