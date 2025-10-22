@@ -31,17 +31,16 @@ const pointPlans = [
     name: '스타터 플랜',
     description: '소규모 임대인 전용',
     monthlyPrice: 14900,
-    yearlyPrice: Math.floor(14900 * 12 * 0.85), // 15% 할인
+    yearlyPrice: Math.floor(14900 * 12 * 0.88), // 12% 할인
     tenantLimit: '5명',
     icon: Home,
     color: 'blue',
     features: [
       '건물/호수 무제한 등록',
-      '계약서 업로드 (PDF/사진)',
+      'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '은행 API 자동 입금 확인',
-      '카톡/문자 자동 알림',
+      '자동 입금 확인',
       '세금 신고용 장부 생성'
     ]
   },
@@ -50,17 +49,16 @@ const pointPlans = [
     name: '베이직 플랜',
     description: '소규모 임대인 (원룸·오피스텔)',
     monthlyPrice: 24900,
-    yearlyPrice: Math.floor(24900 * 12 * 0.85),
+    yearlyPrice: Math.floor(24900 * 12 * 0.88),
     tenantLimit: '10명',
     icon: Building,
     color: 'green',
     features: [
       '건물/호수 무제한 등록',
-      '계약서 업로드 (PDF/사진)',
+      'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '은행 API 자동 입금 확인',
-      '카톡/문자 자동 알림',
+      '자동 입금 확인',
       '세금 신고용 장부 생성'
     ],
     popular: true
@@ -70,17 +68,16 @@ const pointPlans = [
     name: '스탠다드 플랜',
     description: '일반 임대인 (아파트·빌라 다수)',
     monthlyPrice: 54900,
-    yearlyPrice: Math.floor(54900 * 12 * 0.85),
+    yearlyPrice: Math.floor(54900 * 12 * 0.88),
     tenantLimit: '30명',
     icon: Building2,
     color: 'purple',
     features: [
       '건물/호수 무제한 등록',
-      '계약서 업로드 (PDF/사진)',
+      'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '은행 API 자동 입금 확인',
-      '카톡/문자 자동 알림',
+      '자동 입금 확인',
       '세금 신고용 장부 생성'
     ]
   },
@@ -89,17 +86,16 @@ const pointPlans = [
     name: '프로 플랜',
     description: '중형 임대 사업자 전용',
     monthlyPrice: 84900,
-    yearlyPrice: Math.floor(84900 * 12 * 0.85),
+    yearlyPrice: Math.floor(84900 * 12 * 0.88),
     tenantLimit: '50명',
     icon: TrendingUp,
     color: 'orange',
     features: [
       '건물/호수 무제한 등록',
-      '계약서 업로드 (PDF/사진)',
+      'AI 계약서 업로드 (사진 하나로 임차인 자동등록)',
       '월세 납부 관리',
       '계약 만료 알림',
-      '은행 API 자동 입금 확인',
-      '카톡/문자 자동 알림',
+      '자동 입금 확인',
       '세금 신고용 장부 생성'
     ]
   }
@@ -282,7 +278,7 @@ export default function PointsShopPage() {
           </button>
           <span className={`text-sm ${billingCycle === 'yearly' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400'}`}>
             연간 구매
-            <Badge variant="secondary" className="ml-2">15% 할인</Badge>
+            <Badge variant="secondary" className="ml-2">12% 할인</Badge>
           </span>
         </div>
 
@@ -337,7 +333,7 @@ export default function PointsShopPage() {
                     </div>
                     {billingCycle === 'yearly' && (
                       <div className="text-xs text-green-600 dark:text-green-400 mt-1">
-                        월 {Math.floor(pointCost / 12).toLocaleString()}P (15% 할인)
+                        월 {Math.floor(pointCost / 12).toLocaleString()}P (12% 할인)
                       </div>
                     )}
                   </div>
