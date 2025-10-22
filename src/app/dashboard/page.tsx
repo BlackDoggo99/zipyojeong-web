@@ -99,6 +99,12 @@ export default function DashboardPage() {
             
             {/* 데스크톱 네비게이션 메뉴 */}
             <nav className="hidden md:flex items-center space-x-6">
+            <Link
+                href="/#features"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+              >
+                기능
+              </Link>
               <Link
                 href="/pricing"
                 className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
