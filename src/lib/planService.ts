@@ -14,6 +14,16 @@ export interface SubscriptionModel {
   updatedAt?: Date;
 }
 
+interface FirestoreSubscription {
+  plan: SubscriptionPlan;
+  expiryDate: string | null;
+  isActive: boolean;
+  userEmail?: string;
+  userName?: string;
+  createdAt?: Timestamp;
+  updatedAt: Timestamp;
+}
+
 export interface PlanDisplayInfo {
   name: string;
   tenantLimit: number;
@@ -100,12 +110,12 @@ export class PlanService {
   // 사용자 플랜 설정
   static async setUserPlan(userId: string, subscription: SubscriptionModel): Promise<void> {
     try {
-      const updateData: any = {
-        plan: subscription.plan,
-        expiryDate: subscription.expiryDate?.toISOString() || null,
-        isActive: subscription.isActive,
-        updatedAt: Timestamp.now()
-      };
+      const updateData: FirestoreSubscription = {
+      plan: subscription.plan,
+      expiryDate: subscription.expiryDate?.toISOString() || null,
+      isActive: subscription.isActive,
+      updatedAt: Timestamp.now()
+    };
 
       // 사용자 정보가 있으면 추가
       if (subscription.userEmail) updateData.userEmail = subscription.userEmail;
@@ -303,7 +313,7 @@ export class PlanService {
         const userInfo = await this.getUserInfo(userId);
 
         if (userInfo.email || userInfo.name) {
-          const updateData: any = {
+          const updateData: Partial<FirestoreSubscription> = {
             updatedAt: Timestamp.now()
           };
 
