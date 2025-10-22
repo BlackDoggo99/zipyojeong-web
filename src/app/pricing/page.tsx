@@ -147,7 +147,7 @@ export default function PricingPage() {
 
   const getAdditionalYearlyPrice = () => {
     const monthlyPrice = 19900;
-    const yearlyPrice = Math.floor(monthlyPrice * 12 * 0.88); // 15% 할인
+    const yearlyPrice = Math.floor(monthlyPrice * 12 * 0.88); // 12% 할인
     return yearlyPrice.toLocaleString();
   };
 
@@ -256,7 +256,7 @@ export default function PricingPage() {
                         {billingCycle === 'yearly' && !plan.enterprise && (
                           <div className="text-xs text-green-600 dark:text-green-400 mt-1">
                             월 ₩{Math.floor(parseInt(getDiscountedPrice(plan.price).replace(/,/g, '')) / 12).toLocaleString()} 
-                            (15% 할인)
+                            (12% 할인)
                           </div>
                         )}
                       </>
