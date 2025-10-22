@@ -405,5 +405,72 @@ export default function PointsShopPage() {
         </Card>
       </main>
     </div>
+    
+      {/* Footer */}
+      <footer className="bg-gray-900 dark:bg-black text-white py-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">집</span>
+                </div>
+                <span className="text-xl font-bold">집요정</span>
+              </div>
+              <p className="text-gray-400">
+                스마트한 임대 관리 솔루션
+              </p>
+              <p className="text-gray-400 text-xs">
+                상호명 : 라이프컴포트 (Life Comfort)
+              </p>
+              <p className="text-gray-400 text-xs">
+                대표 : 이정관, 김민욱
+              </p>
+              <p className="text-gray-400 text-xs">
+                사업자등록번호 : 366-67-00617
+              </p>
+              <p className="text-gray-400 text-xs">
+                주소 : 61940 광주광역시 서구 계수로 76, 301호
+              </p>
+              <p className="text-gray-400 text-xs">
+                이메일 : krlifecomfort@gmail.com
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">서비스</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href="#features" className="hover:text-white transition-colors">기능</Link></li>
+                <li><Link href="/pricing" className="hover:text-white transition-colors">요금제</Link></li>
+                <li><Link href="/download" className="hover:text-white transition-colors">앱 다운로드</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">지원</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href="/help" className="hover:text-white transition-colors">도움말</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">문의하기</Link></li>
+                <li><Link href="/faq" className="hover:text-white transition-colors">자주 묻는 질문</Link></li>
+                <li><Link href="/account-deletion" className="hover:text-white transition-colors">계정 삭제</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">약관</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href="/privacy" className="hover:text-white transition-colors">개인정보처리방침</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">이용약관</Link></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 dark:border-gray-900 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2025 라이프컴포트 (Life Comfort). All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }
+
