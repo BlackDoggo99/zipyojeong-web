@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+//import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; <- 어드민 기능인데 지금 후속 select 파일을 만들다 말았음. 임시 비활성화.
 import { PlanService, SubscriptionPlan } from '@/lib/planService';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -213,6 +213,7 @@ export default function AdminPlansPage() {
 
               <div>
                 <Label htmlFor="plan">플랜</Label>
+                {/* 마찬가지로 select 관련 오류로 임시 비활성화. 추후 활성화 필요.
                 <Select value={grantForm.plan} onValueChange={(value: SubscriptionPlan) => setGrantForm({ ...grantForm, plan: value })}>
                   <SelectTrigger>
                     <SelectValue />
@@ -225,7 +226,7 @@ export default function AdminPlansPage() {
                     <SelectItem value="proplus">프로 플러스</SelectItem>
                     <SelectItem value="enterprise">엔터프라이즈</SelectItem>
                   </SelectContent>
-                </Select>
+                </Select>*/}
               </div>
 
               <div>
