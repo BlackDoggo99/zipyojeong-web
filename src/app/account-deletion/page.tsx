@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { getAuth, deleteUser, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function AccountDeletionPage() {
   const [email, setEmail] = useState('');
@@ -48,17 +49,18 @@ export default function AccountDeletionPage() {
 
       alert('계정이 성공적으로 삭제되었습니다.');
       router.push('/');
-    } catch (err: any) {
+    } catch (err) {
       console.error('계정 삭제 오류:', err);
+      const error = err as { code?: string; message?: string };
       
-      if (err.code === 'auth/wrong-password') {
+      if (error.code === 'auth/wrong-password') {
         setError('비밀번호가 올바르지 않습니다.');
-      } else if (err.code === 'auth/user-not-found') {
+      } else if (error.code === 'auth/user-not-found') {
         setError('사용자를 찾을 수 없습니다.');
-      } else if (err.code === 'auth/requires-recent-login') {
+      } else if (error.code === 'auth/requires-recent-login') {
         setError('보안을 위해 다시 로그인해주세요.');
       } else {
-        setError('계정 삭제 중 오류가 발생했습니다: ' + err.message);
+        setError('계정 삭제 중 오류가 발생했습니다: ' + (error.message || '알 수 없는 오류'));
       }
     } finally {
       setLoading(false);
@@ -124,6 +126,10 @@ export default function AccountDeletionPage() {
                         <li className="flex items-start">
                           <span className="text-amber-500 dark:text-amber-400 mr-2">•</span>
                           <span>활동 내역 및 설정 정보</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-amber-500 dark:text-amber-400 mr-2">•</span>
+                          <span>현재 구독 중인 플랜의 잔여 내역</span>
                         </li>
                       </ul>
                       <p className="text-amber-900 dark:text-amber-200 font-semibold mt-4">이 작업은 되돌릴 수 없습니다.</p>
@@ -274,7 +280,7 @@ export default function AccountDeletionPage() {
           <div className="text-center text-gray-600 dark:text-gray-400 text-sm">
             <p>© 2025 집요정. All rights reserved.</p>
             <p className="mt-2">
-              <a href="/" className="text-blue-600 dark:text-blue-400 hover:underline">홈으로 돌아가기</a>
+              <Link href="/" className="text-blue-600 dark:text-blue-400 hover:underline">홈으로 돌아가기</Link>
             </p>
           </div>
         </div>
