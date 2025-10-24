@@ -40,7 +40,7 @@ export default function CheckoutTest() {
         mKey: data.mKey,
         version: "1.0",
         currency: "WON",
-        returnUrl: "https://yourdomain.com/checkout/complete", // 결제 완료 후 리다이렉트 주소
+        returnUrl: "https://zipyojeong.vercel.app/checkout/complete", // 결제 완료 후 리다이렉트 주소
       };
 
       // 이니시스 결제창 호출
