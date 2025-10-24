@@ -37,7 +37,6 @@ export default function CheckoutTest() {
         goodname: data.goodsName,
         buyername: data.buyerName,
         gopaymethod: "Card", // 테스트용 카드 결제
-        mKey: data.mKey,
         version: "1.0",
         currency: "WON",
         returnUrl: "https://zipyojeong.vercel.app/checkout/complete", // 결제 완료 후 리다이렉트 주소
