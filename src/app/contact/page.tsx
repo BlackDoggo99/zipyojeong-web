@@ -410,7 +410,7 @@ export default function ContactPage() {
                 주소 : 61940 광주광역시 서구 계수로 76, 301호
               </p>
               <p className="text-gray-400 text-xs">
-                이메일 : krlifecomfort@gmail.com
+                연락처 : 010-9437-8487
               </p>
             </div>
             
