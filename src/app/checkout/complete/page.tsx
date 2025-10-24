@@ -1,4 +1,4 @@
-"use client";  // ✅ 꼭 최상단에
+"use client";
 export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
