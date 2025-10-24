@@ -1,4 +1,5 @@
-"use client";
+"use client";  // ✅ 꼭 최상단에
+export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
