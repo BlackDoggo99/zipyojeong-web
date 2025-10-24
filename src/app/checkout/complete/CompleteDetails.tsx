@@ -1,16 +1,18 @@
-"use client";
+"use client"; // ⬅️ 클라이언트 컴포넌트
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebase";
 
-export default function CheckoutCompletePage() {
+// 기존 page.tsx의 함수 내용을 그대로 가져옵니다.
+export default function CompleteDetails() {
   const searchParams = useSearchParams();
   const [message, setMessage] = useState("결제 결과를 확인 중입니다...");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // CSR 환경에서만 실행
     const resultCode = searchParams.get("resultCode");
     const resultMsg = searchParams.get("resultMsg");
     const tid = searchParams.get("tid");
@@ -54,7 +56,7 @@ export default function CheckoutCompletePage() {
   }, [searchParams]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
       <h1 className="text-2xl font-bold mb-4">결제 완료 페이지</h1>
       <p className="text-gray-700 mb-4">{message}</p>
       {!loading && (
