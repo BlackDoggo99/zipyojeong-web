@@ -1,4 +1,4 @@
-"use client"; // ✅ 반드시 클라이언트 컴포넌트로 선언
+"use client";
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
