@@ -33,6 +33,25 @@ const INICIS_SDK_URL = "https://stgstdpay.inicis.com/stdjs/INIStdPay.js";
 // KG이니시스 JS SDK가 전역에 노출된다는 가정 하에 타입 정의
 declare var INIStdPay: any;
 
+// =========================================================================
+// 💡 사용자의 현재 플랜 레벨 가져오기
+// =========================================================================
+function getCurrentPlanLevel(): number | null {
+    // 방법 1: localStorage 사용 (간단한 방법 - 테스트용)
+    // 실제 프로덕션에서는 방법 2를 사용하세요
+    if (typeof window !== 'undefined') {
+        const storedPlanLevel = localStorage.getItem('currentPlanLevel');
+        return storedPlanLevel ? parseInt(storedPlanLevel) : null;
+    }
+
+    // 방법 2: Firebase Auth + Firestore 연동 (프로덕션 권장)
+    // import { getCurrentPlanLevelFromFirestore } from '@/lib/subscription';
+    // const planLevel = await getCurrentPlanLevelFromFirestore();
+    // return planLevel;
+
+    return null; // 로그인하지 않았거나 구독 정보가 없는 경우
+}
+
 // 요금제 정보 (기존 코드 유지)
 const plans = [
   // ... (plans 배열 내용 유지) ...
@@ -42,6 +61,7 @@ const plans = [
     price: '14,900', // 월간 금액
     tenantLimit: '5명',
     tenantNumber: '5',
+    level: 1, // 플랜 레벨 추가
     icon: Home,
     color: 'blue',
     features: [
@@ -60,6 +80,7 @@ const plans = [
     price: '24,900',
     tenantLimit: '10명',
     tenantNumber: '10',
+    level: 2, // 플랜 레벨 추가
     icon: Building,
     color: 'green',
     features: [
@@ -78,6 +99,7 @@ const plans = [
     price: '54,900',
     tenantLimit: '30명',
     tenantNumber: '30',
+    level: 3, // 플랜 레벨 추가
     icon: Building2,
     color: 'purple',
     features: [
@@ -96,6 +118,7 @@ const plans = [
     price: '84,900',
     tenantLimit: '50명',
     tenantNumber: '50',
+    level: 4, // 플랜 레벨 추가
     icon: TrendingUp,
     color: 'orange',
     features: [
@@ -115,6 +138,7 @@ const plans = [
     additionalPrice: '+ 10명당 19,900원',
     tenantLimit: '50+',
     tenantNumber: '50+',
+    level: 5, // 플랜 레벨 추가
     icon: Crown,
     color: 'indigo',
     features: [
@@ -133,6 +157,7 @@ const plans = [
     price: '협의',
     tenantLimit: '무제한',
     tenantNumber: '∞',
+    level: 6, // 플랜 레벨 추가
     icon: Shield,
     color: 'gray',
     features: [
@@ -168,6 +193,22 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
     if (plan.price === '협의') {
         alert("엔터프라이즈 플랜은 '상담 요청' 버튼을 이용해 주세요.");
         return;
+    }
+
+    // 1.5. 현재 구독 플랜 확인 및 다운그레이드 방지
+    const currentPlanLevel = getCurrentPlanLevel(); // 사용자의 현재 플랜 레벨
+
+    if (currentPlanLevel !== null && plan.level < currentPlanLevel) {
+        const currentPlan = plans.find(p => p.level === currentPlanLevel);
+        const confirmDowngrade = window.confirm(
+            `⚠️ 현재 ${currentPlan?.name} 플랜을 사용 중입니다.\n\n` +
+            `${plan.name} 플랜으로 변경하면 관리 가능한 임차인 수가 ${currentPlan?.tenantLimit}에서 ${plan.tenantLimit}로 줄어듭니다.\n\n` +
+            `정말로 다운그레이드하시겠습니까?`
+        );
+
+        if (!confirmDowngrade) {
+            return; // 사용자가 취소하면 결제 중단
+        }
     }
 
     const productName = `집요정 ${plan.name} 플랜 (월간)`;
