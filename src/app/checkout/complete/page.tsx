@@ -1,20 +1,19 @@
-// src/app/checkout/complete/page.js
+// src/app/checkout/complete/page.tsx
 'use client';
 
-import { useSearchParams } from 'next/navigation'; // App Router에서는 useSearchParams 사용
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
 
-export default function PaymentSuccessPage() {
-    // App Router에서 쿼리 파라미터는 useSearchParams로 가져옵니다.
+function PaymentSuccessContent() {
     const searchParams = useSearchParams();
     const oid = searchParams.get('oid');
     const price = searchParams.get('price');
 
     // 금액을 숫자 형식으로 변환하여 콤마 추가
-    // price가 문자열이므로, 안전하게 처리
     const formattedPrice = price ? parseInt(price).toLocaleString() : '0';
 
     return (
@@ -57,5 +56,20 @@ export default function PaymentSuccessPage() {
                 </CardContent>
             </Card>
         </div>
+    );
+}
+
+export default function PaymentSuccessPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex flex-col items-center justify-center bg-green-50 dark:bg-gray-950">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
+                    <p className="mt-4 text-gray-600 dark:text-gray-400">결제 결과 확인 중...</p>
+                </div>
+            </div>
+        }>
+            <PaymentSuccessContent />
+        </Suspense>
     );
 }
