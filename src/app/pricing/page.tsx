@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+// 필요한 컴포넌트들을 import (기존 코드 유지)
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,11 +20,26 @@ import {
   Shield
 } from 'lucide-react';
 
+// =========================================================================
+// 💡 [핵심] 1. Cloud Function API URL 및 결제 로직 상수 정의
+// =========================================================================
+// 확정된 Cloud Function API URL
+const INICIS_API_URL = "https://us-central1-zipyojeong-f1e17.cloudfunctions.net/paymentApi";
+
+// KG이니시스 테스트 환경 JS SDK
+const INICIS_SDK_URL = "https://stgstdpay.inicis.com/stdjs/INIStdPay.js";
+// 운영 환경으로 전환 시: "https://stdpay.inicis.com/stdjs/INIStdPay.js"
+
+// KG이니시스 JS SDK가 전역에 노출된다는 가정 하에 타입 정의
+declare var INIStdPay: any;
+
+// 요금제 정보 (기존 코드 유지)
 const plans = [
+  // ... (plans 배열 내용 유지) ...
   {
     name: '스타터',
     description: '소규모 임대인 전용',
-    price: '14,900',
+    price: '14,900', // 월간 금액
     tenantLimit: '5명',
     tenantNumber: '5',
     icon: Home,
@@ -135,9 +151,134 @@ const plans = [
   }
 ];
 
+// =========================================================================
+// 💡 [핵심] 2. 결제 요청 함수 정의 (월간 결제만 지원)
+// =========================================================================
+const handlePaymentRequest = async (plan: typeof plans[0]) => {
+
+    if (typeof INIStdPay === 'undefined') {
+        alert("KG이니시스 결제 모듈을 로드하지 못했습니다. 페이지를 새로고침 해 주세요.");
+        return;
+    }
+
+    // 1. 결제 금액 및 상품명 계산 (월간 결제만)
+    const rawPrice = plan.price.replace(/,/g, '');
+    const finalAmount = parseInt(rawPrice);
+
+    if (plan.price === '협의') {
+        alert("엔터프라이즈 플랜은 '상담 요청' 버튼을 이용해 주세요.");
+        return;
+    }
+
+    const productName = `집요정 ${plan.name} 플랜 (월간)`;
+
+    try {
+        // 2. Cloud Function에 결제 파라미터 생성 요청
+        const res = await fetch(`${INICIS_API_URL}/requestPayment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                amount: finalAmount,
+                planName: productName,
+                // TODO: 실제 사용자의 ID 또는 UID를 추가하여 Cloud Function으로 전달하세요.
+                userId: 'USER_ID_PLACEHOLDER'
+            }),
+        });
+
+        if (!res.ok) throw new Error("결제 파라미터 생성 실패");
+
+        const payData = await res.json();
+
+        // 3. 결제 폼 생성 (KG이니시스 샘플 방식 준수)
+        const form = document.createElement('form');
+        form.id = 'SendPayForm_id';
+        form.method = 'post';
+        form.style.display = 'none';
+
+        // 필수 파라미터 설정
+        const params = {
+            version: '1.0',
+            mid: payData.mid,
+            goodname: productName,
+            oid: payData.oid,
+            price: payData.price,
+            currency: 'WON',
+            buyername: '테스트 사용자', // TODO: 실제 사용자 이름
+            buyertel: '01012345678',     // TODO: 실제 사용자 전화번호
+            buyeremail: 'test@zipyojeong.com', // TODO: 실제 사용자 이메일
+            timestamp: payData.timestamp,
+            signature: payData.signature,
+            verification: payData.verification,
+            mKey: payData.mKey,
+            use_chkfake: payData.use_chkfake,
+            gopaymethod: 'Card:DirectBank:VBank:HPP', // 결제수단
+            acceptmethod: 'HPP(1):va_receipt:below1000:centerCd(Y)',
+            returnUrl: `${INICIS_API_URL}/inicisCallback`,
+            closeUrl: window.location.href, // 결제창 닫기 시 돌아올 URL
+        };
+
+        // 파라미터를 hidden input으로 추가
+        Object.entries(params).forEach(([key, value]) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = String(value);
+            form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+
+        // 4. INIStdPay.js의 결제 요청 함수 호출
+        INIStdPay.pay('SendPayForm_id');
+
+    } catch (error: any) {
+        console.error("결제 요청 중 오류:", error);
+        alert(`결제 요청 중 오류가 발생했습니다: ${error.message || '서버 오류'}`);
+    }
+};
+
+// =========================================================================
+// 3. PricingPage 컴포넌트 (기존 코드 유지 및 Button 연결)
+// =========================================================================
 export default function PricingPage() {
+  // 💡 [임시 비활성화] 연간 결제 기능 - PG사 계약 후 활성화 예정
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
+  // 💡 [핵심] INIStdPay SDK 동적 로드
+  useEffect(() => {
+    // 이미 로드되어 있는지 확인
+    if (typeof INIStdPay !== 'undefined') {
+      console.log('INIStdPay SDK 이미 로드됨');
+      return;
+    }
+
+    // SDK 스크립트 동적 로드
+    const script = document.createElement('script');
+    script.src = INICIS_SDK_URL;
+    script.charset = 'UTF-8';
+    script.async = true;
+    script.onload = () => {
+      console.log('INIStdPay SDK 로드 완료');
+    };
+    script.onerror = () => {
+      console.error('INIStdPay SDK 로드 실패');
+      alert('결제 모듈을 로드하는 데 실패했습니다. 페이지를 새로고침 해 주세요.');
+    };
+
+    document.body.appendChild(script);
+
+    // cleanup
+    return () => {
+      // SDK 스크립트 제거 (페이지 언마운트 시)
+      const existingScript = document.querySelector(`script[src="${INICIS_SDK_URL}"]`);
+      if (existingScript) {
+        existingScript.remove();
+      }
+    };
+  }, []);
+
+  // 💡 [임시 비활성화] 연간 할인 가격 계산 함수
+  /*
   const getDiscountedPrice = (price: string) => {
     if (price === '협의') return price;
     const numPrice = parseInt(price.replace(/,/g, ''));
@@ -150,28 +291,31 @@ export default function PricingPage() {
     const yearlyPrice = Math.floor(monthlyPrice * 12 * 0.88); // 12% 할인
     return yearlyPrice.toLocaleString();
   };
+  */
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
       <Header />
-      
-      {/* Hero Section */}
+
+      {/* Hero Section 및 Billing Toggle (기존 코드 유지) */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* ... (Hero Section 내용 유지) ... */}
         <div className="text-center space-y-4">
           <Badge variant="secondary" className="px-4 py-2">
             <Sparkles className="w-4 h-4 mr-2" />
             합리적인 가격
           </Badge>
-          
+
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-gray-100">
             규모에 맞는 <span className="text-blue-600">완벽한 요금제</span>
           </h1>
-          
+
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
             소규모 임대인부터 대형 관리업체까지, 모든 규모에 최적화된 요금제를 제공합니다
           </p>
 
-          {/* Billing Toggle */}
+          {/* 💡 [임시 비활성화] Billing Toggle - PG사 계약 후 활성화 예정 */}
+          {/*
           <div className="flex items-center justify-center gap-4 pt-4">
             <span className={`text-sm ${billingCycle === 'monthly' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400'}`}>
               월간 결제
@@ -191,6 +335,7 @@ export default function PricingPage() {
               <Badge variant="secondary" className="ml-2">12% 할인</Badge>
             </span>
           </div>
+          */}
         </div>
       </section>
 
@@ -200,8 +345,8 @@ export default function PricingPage() {
           {plans.map((plan) => {
             const Icon = plan.icon;
             return (
-              <Card 
-                key={plan.name} 
+              <Card
+                key={plan.name}
                 className={`relative border-0 shadow-lg hover:shadow-xl transition-all dark:bg-gray-900 ${
                   plan.popular ? 'ring-2 ring-green-500 scale-105' : ''
                 }`}
@@ -214,7 +359,8 @@ export default function PricingPage() {
                     </Badge>
                   </div>
                 )}
-                
+
+                {/* ... (CardHeader 및 CardContent 내용 유지) ... */}
                 <CardHeader className="text-center pb-4">
                   <div className={`w-12 h-12 bg-${plan.color}-100 dark:bg-${plan.color}-900/30 rounded-lg flex items-center justify-center mx-auto mb-4`}>
                     <Icon className={`w-6 h-6 text-${plan.color}-600 dark:text-${plan.color}-400`} />
@@ -224,7 +370,7 @@ export default function PricingPage() {
                     {plan.description}
                   </CardDescription>
                 </CardHeader>
-                
+
                 <CardContent className="text-center pb-4">
                   <div className="mb-6">
                     <div className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-2">
@@ -236,29 +382,18 @@ export default function PricingPage() {
                     </div>
                     {!plan.enterprise ? (
                       <>
+                        {/* 💡 월간 결제만 표시 */}
                         <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                          {billingCycle === 'monthly' ? 
-                            `₩${plan.price}` : 
-                            `₩${getDiscountedPrice(plan.price)}`
-                          }
+                          ₩{plan.price}
                         </div>
                         {plan.additionalPrice && (
                           <div className="text-sm text-gray-900 dark:text-gray-400 mt-1">
-                            {billingCycle === 'monthly' ?
-                              '+ 10명당 ₩19,900/월' :
-                              `+ 10명당 ₩${getAdditionalYearlyPrice()}/년`
-                            }
+                            + 10명당 ₩19,900/월
                           </div>
                         )}
                         <div className="text-sm text-gray-900 dark:text-gray-400">
-                          {billingCycle === 'monthly' ? '/월' : '/년'}
+                          /월
                         </div>
-                        {billingCycle === 'yearly' && !plan.enterprise && (
-                          <div className="text-xs text-green-600 dark:text-green-400 mt-1">
-                            월 ₩{Math.floor(parseInt(getDiscountedPrice(plan.price).replace(/,/g, '')) / 12).toLocaleString()} 
-                            (12% 할인)
-                          </div>
-                        )}
                       </>
                     ) : (
                       <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -266,7 +401,7 @@ export default function PricingPage() {
                       </div>
                     )}
                   </div>
-                  
+
                   <ul className="space-y-2 text-sm text-left mb-6">
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-start">
@@ -278,20 +413,28 @@ export default function PricingPage() {
                     ))}
                   </ul>
                 </CardContent>
-                
+
                 <CardFooter>
                   {plan.enterprise ? (
+                    // 엔터프라이즈는 상담 요청 링크 유지
                     <Link href="/contact" className="w-full">
                       <Button variant="outline" className="w-full">
                         상담 요청
                       </Button>
                     </Link>
                   ) : (
-                    <Link href="/signup" className="w-full">
-                      <Button className={`w-full ${plan.popular ? 'bg-green-600 hover:bg-green-700' : ''}`}>
-                        시작하기
-                      </Button>
-                    </Link>
+                    // 💡 [핵심] 일반 요금제는 결제 요청 버튼으로 변경
+                    <Button
+                      onClick={() => handlePaymentRequest(plan)}
+                      className={`w-full ${plan.popular ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                    >
+                      시작하기
+                    </Button>
+                    // <Link href="/signup" className="w-full">
+                    //   <Button className={`w-full ${plan.popular ? 'bg-green-600 hover:bg-green-700' : ''}`}>
+                    //     시작하기
+                    //   </Button>
+                    // </Link>
                   )}
                 </CardFooter>
               </Card>
@@ -299,6 +442,9 @@ export default function PricingPage() {
           })}
         </div>
       </section>
+
+      {/* Feature Comparison, FAQ, CTA, Footer (기존 코드 유지) */}
+      {/* ... (나머지 섹션 내용 유지) ... */}
 
       {/* Feature Comparison */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -470,7 +616,7 @@ export default function PricingPage() {
           <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-12">
             자주 묻는 질문
           </h2>
-          
+
           <div className="space-y-6">
             <Card className="dark:bg-gray-900">
               <CardHeader>
@@ -556,7 +702,7 @@ export default function PricingPage() {
                 연락처 : 010-9437-8487
               </p>
             </div>
-            
+
             <div>
               <h3 className="font-semibold mb-4">서비스</h3>
               <ul className="space-y-2 text-gray-400">
@@ -565,7 +711,7 @@ export default function PricingPage() {
                 <li><Link href="/download" className="hover:text-white transition-colors">앱 다운로드</Link></li>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="font-semibold mb-4">지원</h3>
               <ul className="space-y-2 text-gray-400">
@@ -575,7 +721,7 @@ export default function PricingPage() {
                 <li><Link href="/account-deletion" className="hover:text-white transition-colors">계정 삭제</Link></li>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="font-semibold mb-4">약관</h3>
               <ul className="space-y-2 text-gray-400">
@@ -584,7 +730,7 @@ export default function PricingPage() {
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-gray-800 dark:border-gray-900 mt-8 pt-8 text-center text-gray-400">
             <p>&copy; 2025 라이프컴포트 (Life Comfort). All rights reserved.</p>
           </div>

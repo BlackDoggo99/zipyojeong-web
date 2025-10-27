@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 사용자는 자신의 문서만 읽고 쓸 수 있음
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // 🔐 중요: plan 필드는 수정 금지 (관리자가 Firebase Console에서만 변경 가능)
+      allow update: if request.auth != null && 
+                   request.auth.uid == userId &&
+                   !('plan' in request.resource.data.diff(resource.data).changedKeys());
+    }
+    
+    // 세입자 정보는 본인 것만 접근 가능 (최상위 tenants 컬렉션)
+    match /tenants/{tenantId} {
+      allow read, write: if request.auth != null &&
+                        request.auth.uid == resource.data.ownerId;
+      allow create: if request.auth != null &&
+                   request.auth.uid == request.resource.data.ownerId;
+    }
+
+    // 🔥 수정: 사용자별 임차인 서브컬렉션 규칙 추가 (실제 저장 경로)
+    match /users/{userId}/tenants/{tenantId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow list: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 🔥 수정: 사용자별 결제 서브컬렉션 규칙 추가
+    match /users/{userId}/payments/{paymentId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow list: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 🔥 수정: 사용자별 특약사항 서브컬렉션 규칙 추가
+    match /users/{userId}/specialTerms/{termId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow list: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 기타 컬렉션들은 인증된 사용자만 자신의 데이터 접근
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

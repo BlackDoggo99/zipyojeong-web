@@ -1,26 +1,61 @@
-import { Suspense } from "react";
-// 1단계에서 분리한 클라이언트 컴포넌트를 가져옵니다.
-import CompleteDetails from "./CompleteDetails"; 
+// src/app/checkout/complete/page.js
+'use client';
 
-// 이 파일은 서버 컴포넌트입니다.
-// "use client" 지시어를 제거하고, Suspense를 import합니다.
+import { useSearchParams } from 'next/navigation'; // App Router에서는 useSearchParams 사용
+import Link from 'next/link';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { CheckCircle } from 'lucide-react';
 
-// Next.js 빌드 시점에 정적 렌더링을 방지하고 요청 시 렌더링하도록 합니다.
-// 'useSearchParams' 사용으로 이미 동적 렌더링이 강제되지만, 명시적으로 유지할 수 있습니다.
-export const dynamic = "force-dynamic";
+export default function PaymentSuccessPage() {
+    // App Router에서 쿼리 파라미터는 useSearchParams로 가져옵니다.
+    const searchParams = useSearchParams();
+    const oid = searchParams.get('oid');
+    const price = searchParams.get('price');
 
-export default function CheckoutCompletePage() {
-  return (
-    // 💡 핵심 해결책: useSearchParams를 사용하는 컴포넌트를 <Suspense>로 감싸줍니다.
-    // 이는 서버 측 프리렌더링 시 발생하는 오류를 방지하고, 
-    // 클라이언트 측에서 훅이 실행될 때까지 기다리도록 합니다.
-    <Suspense fallback={
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-        <h1 className="text-2xl font-bold mb-4">결제 완료 페이지</h1>
-        <p className="text-gray-700 mb-4">결제 정보를 로드하고 있습니다...</p>
-      </div>
-    }>
-      <CompleteDetails />
-    </Suspense>
-  );
+    // 금액을 숫자 형식으로 변환하여 콤마 추가
+    // price가 문자열이므로, 안전하게 처리
+    const formattedPrice = price ? parseInt(price).toLocaleString() : '0';
+
+    return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-green-50 dark:bg-gray-950">
+            <Card className="max-w-md w-full p-6 text-center shadow-2xl border-t-4 border-green-500 dark:bg-gray-900">
+                <CardHeader className="flex flex-col items-center">
+                    <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
+                    <CardTitle className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        결제가 성공적으로 완료되었습니다! 🎉
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                        집요정 프리미엄 서비스를 이용해 보세요.
+                    </p>
+
+                    <div className="text-left p-4 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-2">
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                            <strong>주문번호 (MOID):</strong>
+                            <span className="font-mono text-xs ml-2 text-indigo-600 dark:text-indigo-400">{oid || '확인 불가'}</span>
+                        </p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                            <strong>결제 금액:</strong>
+                            <span className="font-bold text-lg ml-2 text-green-600 dark:text-green-400">₩{formattedPrice}</span>원
+                        </p>
+                    </div>
+
+                    <div className="mt-8 space-y-4">
+                        <Link href="/dashboard" passHref>
+                            <Button className="w-full bg-indigo-500 hover:bg-indigo-600 text-white">
+                                서비스 시작하기 (대시보드 이동)
+                            </Button>
+                        </Link>
+                        <Link href="/pricing" passHref>
+                            <Button variant="outline" className="w-full text-gray-700 dark:text-gray-300 dark:border-gray-700">
+                                요금제 페이지로 돌아가기
+                            </Button>
+                        </Link>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
 }
