@@ -23,8 +23,8 @@ import {
 // =========================================================================
 // 💡 [핵심] 1. Cloud Function API URL 및 결제 로직 상수 정의
 // =========================================================================
-// 확정된 Cloud Function API URL
-const INICIS_API_URL = "https://us-central1-zipyojeong-f1e17.cloudfunctions.net/paymentApi";
+// Next.js API Route URL
+const INICIS_API_URL = "/api/payment";
 
 // KG이니시스 테스트 환경 JS SDK
 const INICIS_SDK_URL = "https://stgstdpay.inicis.com/stdjs/INIStdPay.js";
@@ -173,8 +173,8 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
     const productName = `집요정 ${plan.name} 플랜 (월간)`;
 
     try {
-        // 2. Cloud Function에 결제 파라미터 생성 요청
-        const res = await fetch(`${INICIS_API_URL}/requestPayment`, {
+        // 2. API Route에 결제 파라미터 생성 요청
+        const res = await fetch(`${INICIS_API_URL}/request`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -213,7 +213,7 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
             use_chkfake: payData.use_chkfake,
             gopaymethod: 'Card:DirectBank:VBank:HPP', // 결제수단
             acceptmethod: 'HPP(1):va_receipt:below1000:centerCd(Y)',
-            returnUrl: `${INICIS_API_URL}/inicisCallback`,
+            returnUrl: `${window.location.origin}/api/payment/callback`,
             closeUrl: window.location.href, // 결제창 닫기 시 돌아올 URL
         };
 

@@ -8,7 +8,9 @@ const cors = require('cors');
 const getUrl = require('./properties');
 
 // Firebase Admin SDK 초기화
-admin.initializeApp();
+if (!admin.apps.length) {
+    admin.initializeApp();
+}
 const db = admin.firestore();
 
 const app = express();
@@ -100,7 +102,7 @@ app.post("/inicisCallback", async (req, res) => {
     }
 
     // 5. 최종 승인 요청
-    request.post({ method: 'POST', uri: authUrl2, form: options, json: true }, (err, httpResponse, body) => {
+    request.post({ method: 'POST', uri: authUrl2, form: options, json: true }, async (err, httpResponse, body) => {
 
         if (err || !body || body.resultCode !== "0000") {
             console.error("최종 승인 실패:", err || body);
