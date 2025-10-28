@@ -72,7 +72,7 @@ export default function DashboardPage() {
 
   const handleDownloadApp = () => {
     // 실제 앱 다운로드 링크로 연결 (현재는 플레이스토어 예시)
-    window.open('https://play.google.com/store/apps', '_blank');
+    window.open('https://play.google.com/store/apps/details?id=com.zipyojeong.app&pli=1', '_blank');
   };
 
   return (
