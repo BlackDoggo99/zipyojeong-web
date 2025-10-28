@@ -170,7 +170,7 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
         return;
     }
 
-    const productName = `집요정 ${plan.name} 플랜 (월간)`;
+    const productName = `Zipyojeong ${plan.name} Plan`; // 한글/특수문자 제거
 
     try {
         // 2. API Route에 결제 파라미터 생성 요청
@@ -195,26 +195,26 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
         form.method = 'post';
         form.style.display = 'none';
 
-        // 필수 파라미터 설정
+        // 필수 파라미터 설정 (샘플과 완전히 동일하게)
         const params = {
             version: '1.0',
-            gopaymethod: 'Card:DirectBank:VBank:HPP',
             mid: payData.mid,
+            goodname: productName,
             oid: payData.oid,
             price: payData.price,
-            timestamp: String(payData.timestamp),
-            use_chkfake: payData.use_chkfake,
-            signature: payData.signature,
-            verification: payData.verification,
-            mKey: payData.mKey,
             currency: 'WON',
-            goodname: productName,
             buyername: 'tester',
             buyertel: '01012345678',
             buyeremail: 'test@test.com',
-            acceptmethod: 'HPP(1):va_receipt',
-            returnUrl: 'https://zipyojeong.vercel.app/api/payment/callback',
-            closeUrl: 'https://zipyojeong.vercel.app/pricing',
+            timestamp: payData.timestamp,
+            signature: payData.signature,
+            verification: payData.verification,
+            mKey: payData.mKey,
+            use_chkfake: payData.use_chkfake,
+            gopaymethod: 'Card:DirectBank:VBank:HPP',
+            acceptmethod: 'HPP(1):va_receipt:below1000:centerCd(Y)',
+            returnUrl: `${window.location.origin}/api/payment/callback`,
+            closeUrl: window.location.href,
         };
 
         // 파라미터를 hidden input으로 추가
