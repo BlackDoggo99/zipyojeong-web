@@ -181,7 +181,6 @@ export default function HomePage() {
                  Android 다운로드
                </Button>
              </Link>
-           </div>
               <Button size="lg" variant="secondary" className="px-8 py-4 text-lg opacity-75 cursor-not-allowed" disabled>
                 <Apple className="w-5 h-5 mr-2" />
                 iOS (준비중)
