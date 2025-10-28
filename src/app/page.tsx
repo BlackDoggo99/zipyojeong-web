@@ -45,7 +45,7 @@ export default function HomePage() {
             <Link href="/signup">
               <Button size="lg" className="px-8 py-4 text-lg">
                 <Smartphone className="w-5 h-5 mr-2" />
-                무료로 시작하기
+                무료 회원가입
               </Button>
             </Link>
             <Link href="#download">
@@ -67,7 +67,7 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-green-500" />
-              추천 가입시 1개월 프리미엄
+              추천인 코드 입력시 1개월 프리미엄 무료
             </div>
           </div>
         </div>
@@ -171,10 +171,17 @@ export default function HomePage() {
               집요정 앱을 다운로드하고 스마트한 임대 관리를 시작하세요
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" className="px-8 py-4 text-lg">
-                <Smartphone className="w-5 h-5 mr-2" />
-                Android 다운로드
-              </Button>
+              <Link 
+    href="https://play.google.com/store/apps/details?id=com.zipyojeong.app&pli=1"
+    target="_blank"
+    rel="noopener noreferrer"
+               >
+               <Button size="lg" variant="secondary" className="px-8 py-4 text-lg">
+                 <Smartphone className="w-5 h-5 mr-2" />
+                 Android 다운로드
+               </Button>
+             </Link>
+           </div>
               <Button size="lg" variant="secondary" className="px-8 py-4 text-lg opacity-75 cursor-not-allowed" disabled>
                 <Apple className="w-5 h-5 mr-2" />
                 iOS (준비중)
