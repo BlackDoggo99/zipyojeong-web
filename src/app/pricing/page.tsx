@@ -230,42 +230,32 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
 
         const payData = await res.json();
 
-        console.log('결제 파라미터:', payData); // 디버깅용
-
-        // 3. 기존 폼이 있으면 제거 (중복 방지)
-        const existingForm = document.getElementById('SendPayForm_id');
-        if (existingForm) {
-            existingForm.remove();
-        }
-
-        // 4. 결제 폼 생성 (KG이니시스 샘플 방식 준수)
+        // 3. 결제 폼 생성 (KG이니시스 샘플 방식 준수)
         const form = document.createElement('form');
         form.id = 'SendPayForm_id';
-        form.name = 'SendPayForm';
-        form.method = 'POST';
-        form.style.display = 'none'; // 반드시 폼을 숨겨야 함!
+        form.method = 'post';
+        form.style.display = 'none';
 
-        // 필수 파라미터 설정 (KG이니시스 샘플과 동일하게)
-        const params: Record<string, string> = {
+        // 필수 파라미터 설정 (원래 작동하던 순서 그대로)
+        const params = {
             version: '1.0',
-            gopaymethod: 'Card:DirectBank:VBank:HPP',
             mid: payData.mid,
+            goodname: productName,
             oid: payData.oid,
             price: payData.price,
-            timestamp: String(payData.timestamp),
-            use_chkfake: payData.use_chkfake,
+            currency: 'WON',
+            buyername: '테스트 사용자', // TODO: 실제 사용자 이름
+            buyertel: '01012345678',     // TODO: 실제 사용자 전화번호
+            buyeremail: 'test@zipyojeong.com', // TODO: 실제 사용자 이메일
+            timestamp: payData.timestamp,
             signature: payData.signature,
             verification: payData.verification,
             mKey: payData.mKey,
-            currency: 'WON',
-            goodname: productName,
-            buyername: '테스트 사용자',
-            buyertel: '01012345678',
-            buyeremail: 'test@zipyojeong.com',
-            returnUrl: `${window.location.origin}/api/payment/callback`,
-            closeUrl: `${window.location.origin}/pricing`,
+            use_chkfake: payData.use_chkfake,
+            gopaymethod: 'Card:DirectBank:VBank:HPP', // 결제수단
             acceptmethod: 'HPP(1):va_receipt:below1000:centerCd(Y)',
-            quotabase: '2:3:4:5:6:7:8:9:10:11:12', // 할부 개월 수 설정 (2~12개월)
+            returnUrl: `${window.location.origin}/api/payment/callback`,
+            closeUrl: window.location.href, // 결제창 닫기 시 돌아올 URL
         };
 
         // 파라미터를 hidden input으로 추가
@@ -279,24 +269,8 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
 
         document.body.appendChild(form);
 
-        console.log('===== 결제 폼 정보 =====');
-        console.log('폼 ID:', form.id);
-        console.log('폼 파라미터:');
-        Object.entries(params).forEach(([key, value]) => {
-            console.log(`  ${key}: ${value}`);
-        });
-        console.log('=======================');
-
-        // 5. DOM 업데이트 후 결제 요청 (약간의 지연으로 안정성 확보)
-        setTimeout(() => {
-            console.log('INIStdPay.pay() 호출 시작');
-            try {
-                INIStdPay.pay('SendPayForm_id');
-                console.log('INIStdPay.pay() 호출 완료');
-            } catch (err) {
-                console.error('INIStdPay.pay() 호출 중 에러:', err);
-            }
-        }, 100);
+        // 4. INIStdPay.js의 결제 요청 함수 호출
+        INIStdPay.pay('SendPayForm_id');
 
     } catch (error: any) {
         console.error("결제 요청 중 오류:", error);
