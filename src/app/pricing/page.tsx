@@ -195,21 +195,21 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
         return;
     }
 
-    // 1.5. 현재 구독 플랜 확인 및 다운그레이드 방지
-    const currentPlanLevel = getCurrentPlanLevel(); // 사용자의 현재 플랜 레벨
+    // 1.5. 현재 구독 플랜 확인 및 다운그레이드 방지 (임시 비활성화)
+    // const currentPlanLevel = getCurrentPlanLevel(); // 사용자의 현재 플랜 레벨
 
-    if (currentPlanLevel !== null && plan.level < currentPlanLevel) {
-        const currentPlan = plans.find(p => p.level === currentPlanLevel);
-        const confirmDowngrade = window.confirm(
-            `⚠️ 현재 ${currentPlan?.name} 플랜을 사용 중입니다.\n\n` +
-            `${plan.name} 플랜으로 변경하면 관리 가능한 임차인 수가 ${currentPlan?.tenantLimit}에서 ${plan.tenantLimit}로 줄어듭니다.\n\n` +
-            `정말로 다운그레이드하시겠습니까?`
-        );
+    // if (currentPlanLevel !== null && plan.level < currentPlanLevel) {
+    //     const currentPlan = plans.find(p => p.level === currentPlanLevel);
+    //     const confirmDowngrade = window.confirm(
+    //         `⚠️ 현재 ${currentPlan?.name} 플랜을 사용 중입니다.\n\n` +
+    //         `${plan.name} 플랜으로 변경하면 관리 가능한 임차인 수가 ${currentPlan?.tenantLimit}에서 ${plan.tenantLimit}로 줄어듭니다.\n\n` +
+    //         `정말로 다운그레이드하시겠습니까?`
+    //     );
 
-        if (!confirmDowngrade) {
-            return; // 사용자가 취소하면 결제 중단
-        }
-    }
+    //     if (!confirmDowngrade) {
+    //         return; // 사용자가 취소하면 결제 중단
+    //     }
+    // }
 
     const productName = `집요정 ${plan.name} 플랜 (월간)`;
 
