@@ -229,7 +229,7 @@ export default function SignupPage() {
                   <CheckCircle className="w-3 h-3 text-green-600" />
                   <span className="font-medium">추천인 코드 혜택</span>
                 </div>
-                • 추천인 코드 입력 시 1개월 프리미엄 플랜 무료 제공<br/>
+                • 추천인 코드 입력 시 1개월 프리미엄 플랜(스타터) 무료 제공<br/>
                 • 모든 프리미엄 기능 이용 가능 (5명 임차인 관리, 고급 기능 등)
               </div>
             </div>
@@ -247,8 +247,8 @@ export default function SignupPage() {
               </div>
               <ul className="space-y-1 text-blue-700 dark:text-blue-400">
                 <li>• 세입자 5명까지 무료 관리</li>
+                <li>• 월세 입금/미납/연체 체크</li>
                 <li>• 계약 만료 알림</li>
-                <li>• 임대료 추적 기능</li>
                 <li>• 신용카드 등록 불필요</li>
               </ul>
             </div>
@@ -260,7 +260,7 @@ export default function SignupPage() {
                   계정 생성 중...
                 </>
               ) : (
-                '무료로 시작하기'
+                '회원가입하기'
               )}
             </Button>
           </form>
