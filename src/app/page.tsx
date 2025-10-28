@@ -141,7 +141,7 @@ export default function HomePage() {
               </div>
               <CardTitle>클라우드 백업</CardTitle>
               <CardDescription>
-                소중한 데이터를 안전하게 클라우드에 보관하여 언제 어디서나 접근하세요.
+                소중한 데이터를 안전하게 Google Firebase 클라우드에 보관하여 언제 어디서나 접근하세요.
               </CardDescription>
             </CardHeader>
           </Card>
