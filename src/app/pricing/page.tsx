@@ -198,23 +198,23 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
         // 필수 파라미터 설정
         const params = {
             version: '1.0',
-            gopaymethod: 'Card:DirectBank:VBank:HPP', // 결제수단 (맨 앞으로)
+            gopaymethod: 'Card:DirectBank:VBank:HPP',
             mid: payData.mid,
             oid: payData.oid,
             price: payData.price,
-            timestamp: payData.timestamp,
+            timestamp: String(payData.timestamp),
             use_chkfake: payData.use_chkfake,
             signature: payData.signature,
             verification: payData.verification,
             mKey: payData.mKey,
             currency: 'WON',
             goodname: productName,
-            buyername: '테스트 사용자', // TODO: 실제 사용자 이름
-            buyertel: '01012345678',     // TODO: 실제 사용자 전화번호
-            buyeremail: 'test@zipyojeong.com', // TODO: 실제 사용자 이메일
-            acceptmethod: 'HPP(1):va_receipt:below1000',
-            returnUrl: `${window.location.origin}/api/payment/callback`,
-            closeUrl: window.location.href, // 결제창 닫기 시 돌아올 URL
+            buyername: 'tester',
+            buyertel: '01012345678',
+            buyeremail: 'test@test.com',
+            acceptmethod: 'HPP(1):va_receipt',
+            returnUrl: 'https://zipyojeong.vercel.app/api/payment/callback',
+            closeUrl: 'https://zipyojeong.vercel.app/pricing',
         };
 
         // 파라미터를 hidden input으로 추가
