@@ -198,21 +198,21 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
         // 필수 파라미터 설정
         const params = {
             version: '1.0',
+            gopaymethod: 'Card:DirectBank:VBank:HPP', // 결제수단 (맨 앞으로)
             mid: payData.mid,
-            goodname: productName,
             oid: payData.oid,
             price: payData.price,
-            currency: 'WON',
-            buyername: '테스트 사용자', // TODO: 실제 사용자 이름
-            buyertel: '01012345678',     // TODO: 실제 사용자 전화번호
-            buyeremail: 'test@zipyojeong.com', // TODO: 실제 사용자 이메일
             timestamp: payData.timestamp,
+            use_chkfake: payData.use_chkfake,
             signature: payData.signature,
             verification: payData.verification,
             mKey: payData.mKey,
-            use_chkfake: payData.use_chkfake,
-            gopaymethod: 'Card:DirectBank:VBank:HPP', // 결제수단
-            acceptmethod: 'HPP(1):va_receipt:below1000:centerCd(Y)',
+            currency: 'WON',
+            goodname: productName,
+            buyername: '테스트 사용자', // TODO: 실제 사용자 이름
+            buyertel: '01012345678',     // TODO: 실제 사용자 전화번호
+            buyeremail: 'test@zipyojeong.com', // TODO: 실제 사용자 이메일
+            acceptmethod: 'HPP(1):va_receipt:below1000',
             returnUrl: `${window.location.origin}/api/payment/callback`,
             closeUrl: window.location.href, // 결제창 닫기 시 돌아올 URL
         };
