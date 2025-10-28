@@ -245,23 +245,23 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
         form.method = 'POST';
         form.acceptCharset = 'euc-kr';
 
-        // 필수 파라미터 설정
-        const params = {
+        // 필수 파라미터 설정 (KG이니시스 샘플과 동일하게)
+        const params: Record<string, string> = {
             version: '1.0',
             gopaymethod: 'Card:DirectBank:VBank:HPP',
             mid: payData.mid,
             oid: payData.oid,
             price: payData.price,
-            timestamp: payData.timestamp,
+            timestamp: String(payData.timestamp),
             use_chkfake: payData.use_chkfake,
             signature: payData.signature,
             verification: payData.verification,
             mKey: payData.mKey,
             currency: 'WON',
             goodname: productName,
-            buyername: '테스트 사용자', // TODO: 실제 사용자 이름
-            buyertel: '01012345678',     // TODO: 실제 사용자 전화번호
-            buyeremail: 'test@zipyojeong.com', // TODO: 실제 사용자 이메일
+            buyername: '테스트 사용자',
+            buyertel: '01012345678',
+            buyeremail: 'test@zipyojeong.com',
             returnUrl: `${window.location.origin}/api/payment/callback`,
             closeUrl: `${window.location.origin}/pricing`,
             acceptmethod: 'HPP(1):va_receipt:below1000:centerCd(Y)',
@@ -278,11 +278,23 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
 
         document.body.appendChild(form);
 
-        console.log('폼 생성 완료, INIStdPay.pay() 호출'); // 디버깅용
+        console.log('===== 결제 폼 정보 =====');
+        console.log('폼 ID:', form.id);
+        console.log('폼 파라미터:');
+        Object.entries(params).forEach(([key, value]) => {
+            console.log(`  ${key}: ${value}`);
+        });
+        console.log('=======================');
 
         // 5. DOM 업데이트 후 결제 요청 (약간의 지연으로 안정성 확보)
         setTimeout(() => {
-            INIStdPay.pay('SendPayForm_id');
+            console.log('INIStdPay.pay() 호출 시작');
+            try {
+                INIStdPay.pay('SendPayForm_id');
+                console.log('INIStdPay.pay() 호출 완료');
+            } catch (err) {
+                console.error('INIStdPay.pay() 호출 중 에러:', err);
+            }
         }, 100);
 
     } catch (error: any) {
