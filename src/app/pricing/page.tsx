@@ -170,7 +170,7 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
         return;
     }
 
-    const productName = `Zipyojeong ${plan.name} Plan`; // 한글/특수문자 제거
+    const productName = `집요정 ${plan.name} 플랜 (월간)`;
 
     try {
         // 2. API Route에 결제 파라미터 생성 요청
@@ -214,7 +214,7 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
             gopaymethod: 'Card:DirectBank:VBank:HPP',
             acceptmethod: 'HPP(1):va_receipt:below1000:centerCd(Y)',
             returnUrl: `${window.location.origin}/api/payment/callback`,
-            closeUrl: window.location.href,
+            closeUrl: `${window.location.origin}/api/payment/close`,
         };
 
         // 파라미터를 hidden input으로 추가
