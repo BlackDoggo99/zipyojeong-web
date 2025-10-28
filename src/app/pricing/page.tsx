@@ -243,7 +243,7 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
         form.id = 'SendPayForm_id';
         form.name = 'SendPayForm';
         form.method = 'POST';
-        form.acceptCharset = 'euc-kr';
+        form.style.display = 'none'; // 반드시 폼을 숨겨야 함!
 
         // 필수 파라미터 설정 (KG이니시스 샘플과 동일하게)
         const params: Record<string, string> = {
@@ -265,6 +265,7 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
             returnUrl: `${window.location.origin}/api/payment/callback`,
             closeUrl: `${window.location.origin}/pricing`,
             acceptmethod: 'HPP(1):va_receipt:below1000:centerCd(Y)',
+            quotabase: '2:3:4:5:6:7:8:9:10:11:12', // 할부 개월 수 설정 (2~12개월)
         };
 
         // 파라미터를 hidden input으로 추가
