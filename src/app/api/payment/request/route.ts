@@ -28,6 +28,12 @@ export async function POST(request: NextRequest) {
         const signKey = SIGN_KEY;
         const mKey = crypto.createHash("sha256").update(signKey).digest('hex');
 
+        console.log("결제 요청 파라미터:", {
+            mid,
+            hasMID: !!process.env.INICIS_MID,
+            hasSignKey: !!process.env.INICIS_SIGN_KEY
+        });
+
         // userId를 짧게 해시 (MD5의 처음 10자)
         const userIdHash = crypto.createHash('md5').update(userId).digest('hex').substring(0, 10);
         const oid = `ZIP_${userIdHash}_${new Date().getTime()}`;
