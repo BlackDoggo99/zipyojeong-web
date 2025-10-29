@@ -211,7 +211,7 @@ const handleMobilePaymentRequest = async (plan: typeof plans[0]) => {
 
         // 필수 파라미터 설정
         const params: Record<string, string> = {
-            P_INI_PAYMENT: '', // 빈 값으로 시도 - 모든 결제수단 표시되는지 테스트
+            P_INI_PAYMENT: 'ALL', // 옵션 2: ALL 값으로 모든 결제수단 표시 시도
             P_MID: payData.P_MID,
             P_OID: payData.P_OID,
             P_AMT: payData.P_AMT,
