@@ -323,7 +323,8 @@ const handlePCPaymentRequest = async (plan: typeof plans[0], currentUser: User |
             mKey: payData.mKey,
             use_chkfake: payData.use_chkfake,
             gopaymethod: 'Card:DirectBank:VBank:HPP',
-            acceptmethod: 'HPP(1):va_receipt:below1000:centerCd(Y)',
+            acceptmethod: 'HPP(1):va_receipt:below1000:centerCd(Y):NOFIX(Y)',
+            popuptype: 'iframe', // 팝업 타입 명시
             returnUrl: `${window.location.origin}/api/payment/callback`,
             closeUrl: `${window.location.origin}/api/payment/close`,
         };
