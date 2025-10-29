@@ -323,10 +323,10 @@ const handlePCPaymentRequest = async (plan: typeof plans[0], currentUser: User |
             mKey: payData.mKey,
             use_chkfake: payData.use_chkfake,
             gopaymethod: 'Card:DirectBank:VBank:HPP',
-            acceptmethod: 'HPP(1):va_receipt:below1000:centerCd(Y):NOFIX(Y)',
-            popuptype: 'iframe', // 팝업 타입 명시
+            acceptmethod: 'HPP(1):va_receipt:below1000',
             returnUrl: `${window.location.origin}/api/payment/callback`,
             closeUrl: `${window.location.origin}/api/payment/close`,
+            popuptype: 'overlay', // overlay 모드로 팝업 시도
         };
 
         // 파라미터를 hidden input으로 추가
