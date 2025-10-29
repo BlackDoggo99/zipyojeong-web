@@ -67,20 +67,17 @@ export async function POST(request: NextRequest) {
 
         const idc_name = body.idc_name;
         const P_REQ_URL = body.P_REQ_URL;
-        const P_REQ_URL2 = getAuthUrl(idc_name);
 
-        // 3. URL 검증 - 일단 로그만 남기고 통과
-        if (P_REQ_URL !== P_REQ_URL2) {
-            console.warn("승인 URL 불일치 (계속 진행):", { P_REQ_URL, P_REQ_URL2, idc_name });
-        }
+        // 3. URL 로그 출력 - KG Inicis가 보내준 URL 사용
+        console.log("모바일 결제 승인 요청:", { P_REQ_URL, idc_name });
 
-        // 4. 최종 승인 요청
+        // 4. 최종 승인 요청 - KG Inicis가 보내준 P_REQ_URL 사용
         const approvalParams = new URLSearchParams({
             P_MID: P_MID,
             P_TID: P_TID
         });
 
-        const approvalResponse = await fetch(P_REQ_URL2, {
+        const approvalResponse = await fetch(P_REQ_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

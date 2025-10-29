@@ -108,13 +108,11 @@ export async function POST(request: NextRequest) {
             format: format
         });
 
-        // 4. authUrl 검증 - 일단 로그만 남기고 통과
-        if (authUrl !== authUrl2) {
-            console.warn("authUrl 불일치 (계속 진행):", { authUrl, authUrl2, idc_name });
-        }
+        // 4. authUrl 로그 출력 - KG Inicis가 보내준 URL 사용
+        console.log("결제 승인 요청:", { authUrl, idc_name });
 
-        // 5. 최종 승인 요청
-        const approvalResponse = await fetch(authUrl2, {
+        // 5. 최종 승인 요청 - KG Inicis가 보내준 authUrl 사용
+        const approvalResponse = await fetch(authUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -127,12 +125,11 @@ export async function POST(request: NextRequest) {
         if (!result || result.resultCode !== "0000") {
             console.error("최종 승인 실패:", result);
 
-            // 망취소 처리
+            // 망취소 처리 - KG Inicis가 보내준 URL 사용
             const netCancelUrl = body.netCancelUrl;
-            const netCancelUrl2 = getNetCancel(idc_name);
-            if (netCancelUrl === netCancelUrl2) {
+            if (netCancelUrl) {
                 try {
-                    await fetch(netCancelUrl2, {
+                    await fetch(netCancelUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
