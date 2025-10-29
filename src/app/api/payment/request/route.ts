@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 
-// KG이니시스 설정
-const MID = "INIpayTest";
-const SIGN_KEY = "SU5JTElURV9UUklQTEVERVNfS0VZU1RS";
+// KG이니시스 설정 - 환경 변수에서 가져오기
+const MID = process.env.INICIS_MID || "INIpayTest";
+const SIGN_KEY = process.env.INICIS_SIGN_KEY || "SU5JTElURV9UUklQTEVERVNfS0VZU1RS";
 
 export async function POST(request: NextRequest) {
     try {

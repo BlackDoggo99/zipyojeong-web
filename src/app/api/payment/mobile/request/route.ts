@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 
-// KG이니시스 모바일 설정
-const P_MID = "INIpayTest";
-const HASH_KEY = "3CB8183A4BE283555ACC8363C0360223";
+// KG이니시스 모바일 설정 - 환경 변수에서 가져오기
+const P_MID = process.env.INICIS_MOBILE_MID || process.env.INICIS_MID || "INIpayTest";
+const HASH_KEY = process.env.INICIS_MOBILE_HASH_KEY || "3CB8183A4BE283555ACC8363C0360223";
 
 export async function POST(request: NextRequest) {
     try {

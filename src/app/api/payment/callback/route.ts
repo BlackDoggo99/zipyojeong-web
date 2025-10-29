@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import admin from 'firebase-admin';
 
-const SIGN_KEY = "SU5JTElURV9UUklQTEVERVNfS0VZU1RS";
+const SIGN_KEY = process.env.INICIS_SIGN_KEY || "SU5JTElURV9UUklQTEVERVNfS0VZU1RS";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://zipyojeong.vercel.app";
 
 // HTML 리다이렉션 헬퍼 함수
@@ -30,7 +30,7 @@ function createRedirectResponse(url: string) {
     });
 }
 
-// properties 함수들
+// properties 함수들 - 프로덕션 환경
 function getAuthUrl(idc_name: string): string {
     const url = "stdpay.inicis.com/api/payAuth";
     switch (idc_name) {
@@ -41,7 +41,7 @@ function getAuthUrl(idc_name: string): string {
         case 'stg':
             return "https://stg" + url;
         default:
-            return "https://stg" + url;
+            return "https://" + url; // 프로덕션 기본값
     }
 }
 
@@ -55,7 +55,7 @@ function getNetCancel(idc_name: string): string {
         case 'stg':
             return "https://stg" + url;
         default:
-            return "https://stg" + url;
+            return "https://" + url; // 프로덕션 기본값
     }
 }
 

@@ -28,7 +28,7 @@ function createRedirectResponse(url: string) {
     });
 }
 
-// properties 함수
+// properties 함수 - 프로덕션 환경
 function getAuthUrl(idc_name: string): string {
     const url = "mobile.inicis.com/smart/payReq.ini";
     switch (idc_name) {
@@ -39,7 +39,7 @@ function getAuthUrl(idc_name: string): string {
         case 'stg':
             return "https://stg" + url;
         default:
-            return "https://stg" + url;
+            return "https://" + url; // 프로덕션 기본값
     }
 }
 
