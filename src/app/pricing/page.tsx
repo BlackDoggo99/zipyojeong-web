@@ -326,8 +326,9 @@ const handlePCPaymentRequest = async (plan: typeof plans[0], currentUser: User |
             acceptmethod: 'HPP(1):va_receipt:below1000',
             returnUrl: `${window.location.origin}/api/payment/callback`,
             closeUrl: `${window.location.origin}/api/payment/close`,
-            popuptype: 'overlay', // overlay 모드로 팝업 시도
         };
+
+        // popuptype 제거 - 일반 팝업창으로 열림 (overlay는 페이지 위 레이어라 네비게이션 차단됨)
 
         // 파라미터를 hidden input으로 추가
         Object.entries(params).forEach(([key, value]) => {
