@@ -3,6 +3,31 @@ import admin from 'firebase-admin';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://zipyojeong.vercel.app";
 
+// HTML 리다이렉션 헬퍼 함수
+function createRedirectResponse(url: string) {
+    const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>리다이렉션 중...</title>
+        </head>
+        <body>
+            <script>
+                window.location.href = "${url}";
+            </script>
+        </body>
+        </html>
+    `;
+
+    return new NextResponse(html, {
+        status: 200,
+        headers: {
+            'Content-Type': 'text/html; charset=UTF-8',
+        },
+    });
+}
+
 // properties 함수
 function getAuthUrl(idc_name: string): string {
     const url = "mobile.inicis.com/smart/payReq.ini";
@@ -31,7 +56,7 @@ export async function POST(request: NextRequest) {
         // 1. 인증 결과 확인
         if (body.P_STATUS !== "00") {
             console.error("모바일 인증 실패:", body);
-            return NextResponse.redirect(
+            return createRedirectResponse(
                 `${BASE_URL}/checkout/fail?msg=${encodeURIComponent(body.P_RMESG1 || '결제 인증 실패')}`
             );
         }
@@ -47,7 +72,7 @@ export async function POST(request: NextRequest) {
         // 3. URL 검증
         if (P_REQ_URL !== P_REQ_URL2) {
             console.error("승인 URL 불일치:", { P_REQ_URL, P_REQ_URL2 });
-            return NextResponse.redirect(
+            return createRedirectResponse(
                 `${BASE_URL}/checkout/fail?msg=인증 URL 불일치 오류`
             );
         }
@@ -89,7 +114,7 @@ export async function POST(request: NextRequest) {
             // 망취소 처리 (필요 시)
             // TODO: 망취소 로직 추가
 
-            return NextResponse.redirect(
+            return createRedirectResponse(
                 `${BASE_URL}/checkout/fail?msg=${encodeURIComponent(resultMap.P_RMESG1 || '결제 승인 실패')}`
             );
         }
@@ -181,13 +206,13 @@ export async function POST(request: NextRequest) {
             console.error('Firestore 저장 실패:', firestoreError);
         }
 
-        return NextResponse.redirect(
+        return createRedirectResponse(
             `${BASE_URL}/checkout/complete?oid=${resultMap.P_OID}&price=${resultMap.P_AMT}`
         );
 
     } catch (error: any) {
         console.error("모바일 결제 콜백 처리 오류:", error);
-        return NextResponse.redirect(
+        return createRedirectResponse(
             `${BASE_URL}/checkout/fail?msg=${encodeURIComponent('서버 오류가 발생했습니다')}`
         );
     }

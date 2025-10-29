@@ -5,6 +5,31 @@ import admin from 'firebase-admin';
 const SIGN_KEY = "SU5JTElURV9UUklQTEVERVNfS0VZU1RS";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://zipyojeong.vercel.app";
 
+// HTML 리다이렉션 헬퍼 함수
+function createRedirectResponse(url: string) {
+    const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>리다이렉션 중...</title>
+        </head>
+        <body>
+            <script>
+                window.location.href = "${url}";
+            </script>
+        </body>
+        </html>
+    `;
+
+    return new NextResponse(html, {
+        status: 200,
+        headers: {
+            'Content-Type': 'text/html; charset=UTF-8',
+        },
+    });
+}
+
 // properties 함수들
 function getAuthUrl(idc_name: string): string {
     const url = "stdpay.inicis.com/api/payAuth";
@@ -47,7 +72,7 @@ export async function POST(request: NextRequest) {
         // 1. 인증 결과 확인
         if (body.resultCode !== "0000") {
             console.error("인증 실패:", body);
-            return NextResponse.redirect(
+            return createRedirectResponse(
                 `${BASE_URL}/checkout/fail?msg=${encodeURIComponent(body.resultMsg || '결제 인증 실패')}`
             );
         }
@@ -86,7 +111,7 @@ export async function POST(request: NextRequest) {
         // 4. authUrl 검증
         if (authUrl !== authUrl2) {
             console.error("authUrl 불일치:", { authUrl, authUrl2 });
-            return NextResponse.redirect(
+            return createRedirectResponse(
                 `${BASE_URL}/checkout/fail?msg=인증 URL 불일치 오류`
             );
         }
@@ -123,7 +148,7 @@ export async function POST(request: NextRequest) {
                 }
             }
 
-            return NextResponse.redirect(
+            return createRedirectResponse(
                 `${BASE_URL}/checkout/fail?msg=${encodeURIComponent(result?.resultMsg || '네트워크 오류')}`
             );
         }
@@ -216,13 +241,14 @@ export async function POST(request: NextRequest) {
             // Firestore 저장 실패해도 결제는 성공이므로 계속 진행
         }
 
-        return NextResponse.redirect(
+        // HTML로 응답하여 클라이언트 사이드에서 리다이렉션
+        return createRedirectResponse(
             `${BASE_URL}/checkout/complete?oid=${result.MOID}&price=${result.TotPrice}`
         );
 
     } catch (error: any) {
         console.error("결제 콜백 처리 오류:", error);
-        return NextResponse.redirect(
+        return createRedirectResponse(
             `${BASE_URL}/checkout/fail?msg=${encodeURIComponent('서버 오류가 발생했습니다')}`
         );
     }
