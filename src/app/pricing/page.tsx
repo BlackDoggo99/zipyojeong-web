@@ -211,7 +211,7 @@ const handleMobilePaymentRequest = async (plan: typeof plans[0]) => {
 
         // 필수 파라미터 설정
         const params: Record<string, string> = {
-            P_INI_PAYMENT: 'CARD', // 기본 결제수단 (CARD, VBANK 등)
+            P_INI_PAYMENT: 'CARD:BANK:VBANK:MOBILE', // 신용카드:계좌이체:가상계좌:휴대폰 (PC의 gopaymethod와 동일)
             P_MID: payData.P_MID,
             P_OID: payData.P_OID,
             P_AMT: payData.P_AMT,
