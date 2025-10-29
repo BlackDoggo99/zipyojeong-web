@@ -8,16 +8,21 @@ function initializeFirebaseAdmin() {
 
     try {
         console.log('Firebase Admin SDK 초기화 시작...');
+        console.log('NODE_ENV:', process.env.NODE_ENV);
+        console.log('VERCEL_ENV:', process.env.VERCEL_ENV);
 
-        // 환경 변수 확인
+        // 환경 변수 확인 - 에러 발생 전에 반드시 로그 출력
         const hasServiceAccountKey = !!process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-        const hasIndividualKeys = !!(process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY);
+        const hasClientEmail = !!process.env.FIREBASE_CLIENT_EMAIL;
+        const hasPrivateKey = !!process.env.FIREBASE_PRIVATE_KEY;
+        const hasProjectId = !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 
-        console.log('환경 변수 상태:', {
-            FIREBASE_SERVICE_ACCOUNT_KEY: hasServiceAccountKey ? '있음' : '없음',
-            FIREBASE_CLIENT_EMAIL: hasIndividualKeys ? '있음' : '없음',
-            FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY ? '있음' : '없음',
-        });
+        console.log('=== 환경 변수 상태 ===');
+        console.log('FIREBASE_SERVICE_ACCOUNT_KEY:', hasServiceAccountKey ? '있음' : '없음');
+        console.log('FIREBASE_CLIENT_EMAIL:', hasClientEmail ? '있음' : '없음');
+        console.log('FIREBASE_PRIVATE_KEY:', hasPrivateKey ? '있음' : '없음');
+        console.log('NEXT_PUBLIC_FIREBASE_PROJECT_ID:', hasProjectId ? '있음' : '없음');
+        console.log('======================');
 
         let serviceAccount: any;
 
