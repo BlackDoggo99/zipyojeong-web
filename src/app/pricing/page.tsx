@@ -25,13 +25,32 @@ import {
 // =========================================================================
 // Next.js API Route URL
 const INICIS_API_URL = "/api/payment";
+const INICIS_MOBILE_API_URL = "/api/payment/mobile";
 
-// KG이니시스 테스트 환경 JS SDK
-const INICIS_SDK_URL = "https://stgstdpay.inicis.com/stdjs/INIStdPay.js";
+// KG이니시스 테스트 환경 URL
+const INICIS_SDK_URL = "https://stgstdpay.inicis.com/stdjs/INIStdPay.js"; // PC
+const INICIS_MOBILE_URL = "https://mobile.inicis.com/smart/payment/"; // Mobile
 // 운영 환경으로 전환 시: "https://stdpay.inicis.com/stdjs/INIStdPay.js"
 
 // KG이니시스 JS SDK가 전역에 노출된다는 가정 하에 타입 정의
 declare var INIStdPay: any;
+
+// =========================================================================
+// 💡 모바일 감지 함수
+// =========================================================================
+function isMobileDevice(): boolean {
+    if (typeof window === 'undefined') return false;
+
+    // User-Agent 기반 모바일 감지
+    const userAgent = navigator.userAgent.toLowerCase();
+    const mobileKeywords = ['android', 'webos', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+    const isMobileUA = mobileKeywords.some(keyword => userAgent.includes(keyword));
+
+    // 화면 크기 기반 감지
+    const isMobileScreen = window.innerWidth <= 768;
+
+    return isMobileUA || isMobileScreen;
+}
 
 // 요금제 정보 (기존 코드 유지)
 const plans = [
@@ -152,9 +171,86 @@ const plans = [
 ];
 
 // =========================================================================
-// 💡 [핵심] 2. 결제 요청 함수 정의 (월간 결제만 지원)
+// 💡 [핵심] 2-1. 모바일 결제 요청 함수
 // =========================================================================
-const handlePaymentRequest = async (plan: typeof plans[0]) => {
+const handleMobilePaymentRequest = async (plan: typeof plans[0]) => {
+    // 1. 결제 금액 및 상품명 계산
+    const rawPrice = plan.price.replace(/,/g, '');
+    const finalAmount = parseInt(rawPrice);
+
+    if (plan.price === '협의') {
+        alert("엔터프라이즈 플랜은 '상담 요청' 버튼을 이용해 주세요.");
+        return;
+    }
+
+    const productName = `집요정 ${plan.name} 플랜 (월간)`;
+
+    try {
+        // 2. 모바일 결제 파라미터 생성 요청
+        const res = await fetch(`${INICIS_MOBILE_API_URL}/request`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                amount: finalAmount,
+                planName: productName
+            }),
+        });
+
+        if (!res.ok) throw new Error("결제 파라미터 생성 실패");
+
+        const payData = await res.json();
+
+        console.log('모바일 결제 파라미터:', payData);
+
+        // 3. 모바일 결제 폼 생성 및 제출
+        const form = document.createElement('form');
+        form.name = 'mobileweb';
+        form.method = 'POST';
+        form.action = INICIS_MOBILE_URL;
+        form.acceptCharset = 'euc-kr';
+
+        // 필수 파라미터 설정
+        const params: Record<string, string> = {
+            P_INI_PAYMENT: 'CARD', // 기본 결제수단 (CARD, VBANK 등)
+            P_MID: payData.P_MID,
+            P_OID: payData.P_OID,
+            P_AMT: payData.P_AMT,
+            P_GOODS: payData.P_GOODS,
+            P_UNAME: '테스트 사용자',
+            P_MOBILE: '01012345678',
+            P_EMAIL: 'test@test.com',
+            P_NEXT_URL: `${window.location.origin}/api/payment/mobile/callback`,
+            P_CHARSET: 'utf8',
+            P_TIMESTAMP: payData.P_TIMESTAMP,
+            P_CHKFAKE: payData.P_CHKFAKE,
+            P_NOTI: payData.P_OID,
+            P_RESERVED: 'below1000=Y&vbank_receipt=Y&centerCd=Y&amt_hash=Y',
+        };
+
+        // 파라미터를 hidden input으로 추가
+        Object.entries(params).forEach(([key, value]) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value;
+            form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+
+        console.log('모바일 결제 폼 제출');
+        form.submit();
+
+    } catch (error: any) {
+        console.error("모바일 결제 요청 중 오류:", error);
+        alert(`결제 요청 중 오류가 발생했습니다: ${error.message || '서버 오류'}`);
+    }
+};
+
+// =========================================================================
+// 💡 [핵심] 2-2. PC 결제 요청 함수
+// =========================================================================
+const handlePCPaymentRequest = async (plan: typeof plans[0]) => {
 
     if (typeof INIStdPay === 'undefined') {
         alert("KG이니시스 결제 모듈을 로드하지 못했습니다. 페이지를 새로고침 해 주세요.");
@@ -234,6 +330,19 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
     } catch (error: any) {
         console.error("결제 요청 중 오류:", error);
         alert(`결제 요청 중 오류가 발생했습니다: ${error.message || '서버 오류'}`);
+    }
+};
+
+// =========================================================================
+// 💡 [핵심] 2-3. 통합 결제 요청 함수 (모바일/PC 자동 분기)
+// =========================================================================
+const handlePaymentRequest = async (plan: typeof plans[0]) => {
+    if (isMobileDevice()) {
+        console.log('모바일 결제 진행');
+        await handleMobilePaymentRequest(plan);
+    } else {
+        console.log('PC 결제 진행');
+        await handlePCPaymentRequest(plan);
     }
 };
 
