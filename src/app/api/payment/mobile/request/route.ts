@@ -8,7 +8,7 @@ const HASH_KEY = "3CB8183A4BE283555ACC8363C0360223";
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { amount, planName } = body;
+        const { amount, planName, userId } = body;
 
         if (!amount || amount <= 0) {
             return NextResponse.json(
@@ -17,8 +17,15 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        if (!userId) {
+            return NextResponse.json(
+                { success: false, msg: "사용자 정보가 필요합니다." },
+                { status: 400 }
+            );
+        }
+
         // 모바일 결제 파라미터 생성
-        const P_OID = `ZIPM_${new Date().getTime()}_${Math.floor(Math.random() * 1000)}`;
+        const P_OID = `ZIPM_${userId}_${new Date().getTime()}`;
         const P_AMT = amount.toString();
         const P_TIMESTAMP = new Date().getTime().toString();
 

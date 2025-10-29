@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import admin from 'firebase-admin';
 
 const SIGN_KEY = "SU5JTElURV9UUklQTEVERVNfS0VZU1RS";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://zipyojeong.vercel.app";
@@ -130,15 +131,84 @@ export async function POST(request: NextRequest) {
         // 6. 최종 결제 성공
         console.log("결제 성공:", result);
 
-        // TODO: Firestore에 결제 정보 저장
-        // 예시:
-        // await db.collection('payments').doc(result.MOID).set({
-        //     tid: result.tid,
-        //     orderId: result.MOID,
-        //     amount: parseInt(result.TotPrice),
-        //     status: 'completed',
-        //     timestamp: new Date(),
-        // });
+        // Firestore에 결제 정보 저장 + 구독 자동 갱신
+        try {
+            const { adminDb } = await import('@/lib/firebase-admin');
+
+            // 결제 정보 저장
+            const paymentData = {
+                tid: result.tid,
+                orderId: result.MOID,
+                mid: result.mid,
+                amount: parseInt(result.TotPrice),
+                productName: result.goodsName || body.goodname,
+                payMethod: result.payMethod,
+                status: 'completed',
+                resultCode: result.resultCode,
+                resultMsg: result.resultMsg,
+                timestamp: admin.firestore.FieldValue.serverTimestamp(),
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            };
+
+            await adminDb.collection('payments').doc(result.MOID).set(paymentData);
+            console.log('결제 정보 Firestore 저장 완료');
+
+            // 주문번호에서 userId 추출 (형식: ZIP_userId_timestamp)
+            const orderIdParts = result.MOID.split('_');
+            let userId = null;
+
+            if (orderIdParts.length >= 3 && orderIdParts[0] === 'ZIP') {
+                userId = orderIdParts[1];
+            }
+
+            // 구독 정보 업데이트
+            if (userId) {
+                // 플랜 정보 결정 (금액 기반)
+                const amount = parseInt(result.TotPrice);
+                let planName = '';
+                let planLevel = 0;
+
+                if (amount >= 99000) {
+                    planName = '프리미엄';
+                    planLevel = 3;
+                } else if (amount >= 49000) {
+                    planName = '스탠다드';
+                    planLevel = 2;
+                } else if (amount >= 9900) {
+                    planName = '베이직';
+                    planLevel = 1;
+                }
+
+                if (planLevel > 0) {
+                    const now = new Date();
+                    const endDate = new Date(now);
+                    endDate.setMonth(endDate.getMonth() + 1); // 1개월 후
+
+                    const subscriptionData = {
+                        planName,
+                        planLevel,
+                        status: 'active',
+                        startDate: admin.firestore.Timestamp.fromDate(now),
+                        endDate: admin.firestore.Timestamp.fromDate(endDate),
+                        amount,
+                        orderId: result.MOID,
+                        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                    };
+
+                    await adminDb.collection('users').doc(userId).set(
+                        { subscription: subscriptionData },
+                        { merge: true }
+                    );
+
+                    console.log(`사용자 ${userId}의 구독 정보 업데이트 완료: ${planName}`);
+                }
+            } else {
+                console.warn('주문번호에서 userId를 추출할 수 없습니다:', result.MOID);
+            }
+        } catch (firestoreError) {
+            console.error('Firestore 저장 실패:', firestoreError);
+            // Firestore 저장 실패해도 결제는 성공이므로 계속 진행
+        }
 
         return NextResponse.redirect(
             `${BASE_URL}/checkout/complete?oid=${result.MOID}&price=${result.TotPrice}`

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import admin from 'firebase-admin';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://zipyojeong.vercel.app";
 
@@ -96,8 +97,83 @@ export async function POST(request: NextRequest) {
         // 7. 결제 성공
         console.log("모바일 결제 성공:", resultMap);
 
-        // TODO: Firestore에 결제 정보 저장
-        // await db.collection('payments').doc(resultMap.P_OID).set({...});
+        // Firestore에 결제 정보 저장 + 구독 자동 갱신
+        try {
+            const { adminDb } = await import('@/lib/firebase-admin');
+
+            // 결제 정보 저장
+            const paymentData = {
+                tid: resultMap.P_TID,
+                orderId: resultMap.P_OID,
+                mid: resultMap.P_MID,
+                amount: parseInt(resultMap.P_AMT),
+                productName: resultMap.P_GOODS,
+                payMethod: resultMap.P_TYPE,
+                status: 'completed',
+                resultCode: resultMap.P_STATUS,
+                resultMsg: resultMap.P_RMESG1,
+                isMobile: true,
+                timestamp: admin.firestore.FieldValue.serverTimestamp(),
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            };
+
+            await adminDb.collection('payments').doc(resultMap.P_OID).set(paymentData);
+            console.log('모바일 결제 정보 Firestore 저장 완료');
+
+            // 주문번호에서 userId 추출 (형식: ZIPM_userId_timestamp)
+            const orderIdParts = resultMap.P_OID.split('_');
+            let userId = null;
+
+            if (orderIdParts.length >= 3 && orderIdParts[0] === 'ZIPM') {
+                userId = orderIdParts[1];
+            }
+
+            // 구독 정보 업데이트
+            if (userId) {
+                const amount = parseInt(resultMap.P_AMT);
+                let planName = '';
+                let planLevel = 0;
+
+                if (amount >= 99000) {
+                    planName = '프리미엄';
+                    planLevel = 3;
+                } else if (amount >= 49000) {
+                    planName = '스탠다드';
+                    planLevel = 2;
+                } else if (amount >= 9900) {
+                    planName = '베이직';
+                    planLevel = 1;
+                }
+
+                if (planLevel > 0) {
+                    const now = new Date();
+                    const endDate = new Date(now);
+                    endDate.setMonth(endDate.getMonth() + 1);
+
+                    const subscriptionData = {
+                        planName,
+                        planLevel,
+                        status: 'active',
+                        startDate: admin.firestore.Timestamp.fromDate(now),
+                        endDate: admin.firestore.Timestamp.fromDate(endDate),
+                        amount,
+                        orderId: resultMap.P_OID,
+                        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                    };
+
+                    await adminDb.collection('users').doc(userId).set(
+                        { subscription: subscriptionData },
+                        { merge: true }
+                    );
+
+                    console.log(`모바일: 사용자 ${userId}의 구독 정보 업데이트 완료: ${planName}`);
+                }
+            } else {
+                console.warn('주문번호에서 userId를 추출할 수 없습니다:', resultMap.P_OID);
+            }
+        } catch (firestoreError) {
+            console.error('Firestore 저장 실패:', firestoreError);
+        }
 
         return NextResponse.redirect(
             `${BASE_URL}/checkout/complete?oid=${resultMap.P_OID}&price=${resultMap.P_AMT}`

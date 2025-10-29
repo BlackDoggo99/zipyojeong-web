@@ -8,7 +8,7 @@ const SIGN_KEY = "SU5JTElURV9UUklQTEVERVNfS0VZU1RS";
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { amount, planName } = body;
+        const { amount, planName, userId } = body;
 
         if (!amount || amount <= 0) {
             return NextResponse.json(
@@ -17,10 +17,17 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        if (!userId) {
+            return NextResponse.json(
+                { success: false, msg: "사용자 정보가 필요합니다." },
+                { status: 400 }
+            );
+        }
+
         const mid = MID;
         const signKey = SIGN_KEY;
         const mKey = crypto.createHash("sha256").update(signKey).digest('hex');
-        const oid = `ZIP_${new Date().getTime()}_${Math.floor(Math.random() * 1000)}`;
+        const oid = `ZIP_${userId}_${new Date().getTime()}`;
         const price = amount.toString();
         const timestamp = new Date().getTime();
         const use_chkfake = "Y";

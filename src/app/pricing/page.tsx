@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+// Firebase Auth
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, User } from 'firebase/auth';
 // 필요한 컴포넌트들을 import (기존 코드 유지)
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -173,7 +177,13 @@ const plans = [
 // =========================================================================
 // 💡 [핵심] 2-1. 모바일 결제 요청 함수
 // =========================================================================
-const handleMobilePaymentRequest = async (plan: typeof plans[0]) => {
+const handleMobilePaymentRequest = async (plan: typeof plans[0], currentUser: User | null) => {
+    // 로그인 확인
+    if (!currentUser) {
+        alert("결제를 진행하려면 먼저 로그인해 주세요.");
+        return;
+    }
+
     // 1. 결제 금액 및 상품명 계산
     const rawPrice = plan.price.replace(/,/g, '');
     const finalAmount = parseInt(rawPrice);
@@ -192,7 +202,8 @@ const handleMobilePaymentRequest = async (plan: typeof plans[0]) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 amount: finalAmount,
-                planName: productName
+                planName: productName,
+                userId: currentUser.uid
             }),
         });
 
@@ -216,9 +227,9 @@ const handleMobilePaymentRequest = async (plan: typeof plans[0]) => {
             P_OID: payData.P_OID,
             P_AMT: payData.P_AMT,
             P_GOODS: payData.P_GOODS,
-            P_UMANE: '테스터', // 샘플에 P_UMANE으로 되어있음 (오타로 추정되나 샘플과 동일하게)
-            P_MOBILE: '01012345678',
-            P_EMAIL: 'test@test.com',
+            P_UMANE: currentUser.displayName || currentUser.email?.split('@')[0] || '사용자',
+            P_MOBILE: currentUser.phoneNumber || '01000000000',
+            P_EMAIL: currentUser.email || 'user@zipyojeong.com',
             P_NEXT_URL: `${window.location.origin}/api/payment/mobile/callback`,
             P_CHARSET: 'utf8',
             P_TIMESTAMP: payData.P_TIMESTAMP,
@@ -250,7 +261,12 @@ const handleMobilePaymentRequest = async (plan: typeof plans[0]) => {
 // =========================================================================
 // 💡 [핵심] 2-2. PC 결제 요청 함수
 // =========================================================================
-const handlePCPaymentRequest = async (plan: typeof plans[0]) => {
+const handlePCPaymentRequest = async (plan: typeof plans[0], currentUser: User | null) => {
+    // 로그인 확인
+    if (!currentUser) {
+        alert("결제를 진행하려면 먼저 로그인해 주세요.");
+        return;
+    }
 
     if (typeof INIStdPay === 'undefined') {
         alert("KG이니시스 결제 모듈을 로드하지 못했습니다. 페이지를 새로고침 해 주세요.");
@@ -276,8 +292,7 @@ const handlePCPaymentRequest = async (plan: typeof plans[0]) => {
             body: JSON.stringify({
                 amount: finalAmount,
                 planName: productName,
-                // TODO: 실제 사용자의 ID 또는 UID를 추가하여 Cloud Function으로 전달하세요.
-                userId: 'USER_ID_PLACEHOLDER'
+                userId: currentUser.uid
             }),
         });
 
@@ -299,9 +314,9 @@ const handlePCPaymentRequest = async (plan: typeof plans[0]) => {
             oid: payData.oid,
             price: payData.price,
             currency: 'WON',
-            buyername: 'tester',
-            buyertel: '01012345678',
-            buyeremail: 'test@test.com',
+            buyername: currentUser.displayName || currentUser.email?.split('@')[0] || '사용자',
+            buyertel: currentUser.phoneNumber || '01000000000',
+            buyeremail: currentUser.email || 'user@zipyojeong.com',
             timestamp: payData.timestamp,
             signature: payData.signature,
             verification: payData.verification,
@@ -336,13 +351,13 @@ const handlePCPaymentRequest = async (plan: typeof plans[0]) => {
 // =========================================================================
 // 💡 [핵심] 2-3. 통합 결제 요청 함수 (모바일/PC 자동 분기)
 // =========================================================================
-const handlePaymentRequest = async (plan: typeof plans[0]) => {
+const handlePaymentRequest = async (plan: typeof plans[0], currentUser: User | null) => {
     if (isMobileDevice()) {
         console.log('모바일 결제 진행');
-        await handleMobilePaymentRequest(plan);
+        await handleMobilePaymentRequest(plan, currentUser);
     } else {
         console.log('PC 결제 진행');
-        await handlePCPaymentRequest(plan);
+        await handlePCPaymentRequest(plan, currentUser);
     }
 };
 
@@ -350,8 +365,24 @@ const handlePaymentRequest = async (plan: typeof plans[0]) => {
 // 3. PricingPage 컴포넌트 (기존 코드 유지 및 Button 연결)
 // =========================================================================
 export default function PricingPage() {
+  const router = useRouter();
+
+  // 사용자 인증 상태
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
   // 💡 [임시 비활성화] 연간 결제 기능 - PG사 계약 후 활성화 예정
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+
+  // Firebase Auth 상태 감지
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // 💡 [핵심] INIStdPay SDK 동적 로드
   useEffect(() => {
@@ -534,10 +565,11 @@ export default function PricingPage() {
                   ) : (
                     // 💡 [핵심] 일반 요금제는 결제 요청 버튼으로 변경
                     <Button
-                      onClick={() => handlePaymentRequest(plan)}
+                      onClick={() => handlePaymentRequest(plan, currentUser)}
                       className={`w-full ${plan.popular ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                      disabled={loading}
                     >
-                      시작하기
+                      {loading ? '로딩 중...' : currentUser ? '시작하기' : '로그인 후 이용'}
                     </Button>
                     // <Link href="/signup" className="w-full">
                     //   <Button className={`w-full ${plan.popular ? 'bg-green-600 hover:bg-green-700' : ''}`}>
