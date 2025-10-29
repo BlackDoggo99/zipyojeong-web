@@ -300,27 +300,16 @@ const handlePCPaymentRequest = async (plan: typeof plans[0], currentUser: User |
 
         const payData = await res.json();
 
-        // 3. 팝업창 먼저 열기
-        const popupName = 'KGInicisPayment';
-        const popupOptions = 'width=730,height=800,scrollbars=yes,resizable=yes';
-        const popup = window.open('', popupName, popupOptions);
-
-        if (!popup) {
-            alert('팝업 차단이 활성화되어 있습니다. 브라우저 설정에서 팝업을 허용해주세요.');
-            return;
-        }
-
-        // 4. 결제 폼 생성
+        // 3. 결제 폼 생성 (KG이니시스 샘플 방식 준수)
         const form = document.createElement('form');
         form.id = 'SendPayForm_id';
         form.method = 'post';
-        form.action = 'https://stgstdpay.inicis.com/stdpay/INIStdPayStart.php'; // 테스트 환경
-        form.target = popupName; // 위에서 연 팝업창 이름
         form.style.display = 'none';
 
-        // 필수 파라미터 설정
+        // 필수 파라미터 설정 (샘플과 완전히 동일하게)
         const params = {
             version: '1.0',
+            payViewType: 'popup', // 팝업창 모드 설정 (overlay가 아닌 실제 새 창)
             mid: payData.mid,
             goodname: productName,
             oid: payData.oid,
@@ -351,13 +340,8 @@ const handlePCPaymentRequest = async (plan: typeof plans[0], currentUser: User |
 
         document.body.appendChild(form);
 
-        // 5. 팝업창에서 폼 제출
-        form.submit();
-
-        // 폼 제거
-        setTimeout(() => {
-            document.body.removeChild(form);
-        }, 100);
+        // 4. INIStdPay.js의 결제 요청 함수 호출
+        INIStdPay.pay('SendPayForm_id');
 
     } catch (error: any) {
         console.error("결제 요청 중 오류:", error);
