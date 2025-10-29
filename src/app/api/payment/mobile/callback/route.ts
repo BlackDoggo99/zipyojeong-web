@@ -120,12 +120,18 @@ export async function POST(request: NextRequest) {
             await adminDb.collection('payments').doc(resultMap.P_OID).set(paymentData);
             console.log('모바일 결제 정보 Firestore 저장 완료');
 
-            // 주문번호에서 userId 추출 (형식: ZIPM_userId_timestamp)
-            const orderIdParts = resultMap.P_OID.split('_');
+            // orderMappings에서 userId 조회
             let userId = null;
-
-            if (orderIdParts.length >= 3 && orderIdParts[0] === 'ZIPM') {
-                userId = orderIdParts[1];
+            try {
+                const mappingDoc = await adminDb.collection('orderMappings').doc(resultMap.P_OID).get();
+                if (mappingDoc.exists) {
+                    userId = mappingDoc.data()?.userId;
+                    console.log(`모바일 주문번호 매핑 조회 성공: ${resultMap.P_OID} -> ${userId}`);
+                } else {
+                    console.warn(`주문번호 매핑을 찾을 수 없습니다: ${resultMap.P_OID}`);
+                }
+            } catch (mappingError) {
+                console.error('주문번호 매핑 조회 실패:', mappingError);
             }
 
             // 구독 정보 업데이트

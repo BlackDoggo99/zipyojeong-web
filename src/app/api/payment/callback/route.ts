@@ -153,12 +153,18 @@ export async function POST(request: NextRequest) {
             await adminDb.collection('payments').doc(result.MOID).set(paymentData);
             console.log('결제 정보 Firestore 저장 완료');
 
-            // 주문번호에서 userId 추출 (형식: ZIP_userId_timestamp)
-            const orderIdParts = result.MOID.split('_');
+            // orderMappings에서 userId 조회
             let userId = null;
-
-            if (orderIdParts.length >= 3 && orderIdParts[0] === 'ZIP') {
-                userId = orderIdParts[1];
+            try {
+                const mappingDoc = await adminDb.collection('orderMappings').doc(result.MOID).get();
+                if (mappingDoc.exists) {
+                    userId = mappingDoc.data()?.userId;
+                    console.log(`주문번호 매핑 조회 성공: ${result.MOID} -> ${userId}`);
+                } else {
+                    console.warn(`주문번호 매핑을 찾을 수 없습니다: ${result.MOID}`);
+                }
+            } catch (mappingError) {
+                console.error('주문번호 매핑 조회 실패:', mappingError);
             }
 
             // 구독 정보 업데이트

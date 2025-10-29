@@ -24,8 +24,9 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // 모바일 결제 파라미터 생성
-        const P_OID = `ZIPM_${userId}_${new Date().getTime()}`;
+        // userId를 짧게 해시 (MD5의 처음 10자)
+        const userIdHash = crypto.createHash('md5').update(userId).digest('hex').substring(0, 10);
+        const P_OID = `ZIPM_${userIdHash}_${new Date().getTime()}`;
         const P_AMT = amount.toString();
         const P_TIMESTAMP = new Date().getTime().toString();
 
@@ -34,6 +35,20 @@ export async function POST(request: NextRequest) {
         const P_CHKFAKE = crypto.createHash('sha512')
             .update(hashData, 'utf8')
             .digest('base64');
+
+        // Firestore에 주문번호 매핑 저장 (callback에서 userId 추출용)
+        try {
+            const { adminDb } = await import('@/lib/firebase-admin');
+            const admin = (await import('firebase-admin')).default;
+
+            await adminDb.collection('orderMappings').doc(P_OID).set({
+                userId,
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+            console.log(`모바일 주문번호 매핑 저장: ${P_OID} -> ${userId}`);
+        } catch (error) {
+            console.error('주문번호 매핑 저장 실패:', error);
+        }
 
         return NextResponse.json({
             success: true,

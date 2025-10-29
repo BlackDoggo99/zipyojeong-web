@@ -27,13 +27,32 @@ export async function POST(request: NextRequest) {
         const mid = MID;
         const signKey = SIGN_KEY;
         const mKey = crypto.createHash("sha256").update(signKey).digest('hex');
-        const oid = `ZIP_${userId}_${new Date().getTime()}`;
+
+        // userId를 짧게 해시 (MD5의 처음 10자)
+        const userIdHash = crypto.createHash('md5').update(userId).digest('hex').substring(0, 10);
+        const oid = `ZIP_${userIdHash}_${new Date().getTime()}`;
+
         const price = amount.toString();
         const timestamp = new Date().getTime();
         const use_chkfake = "Y";
 
         const signature = crypto.createHash("sha256").update("oid="+oid+"&price="+price+"&timestamp="+timestamp).digest('hex');
         const verification = crypto.createHash("sha256").update("oid="+oid+"&price="+price+"&signKey="+signKey+"&timestamp="+timestamp).digest('hex');
+
+        // Firestore에 주문번호 매핑 저장 (callback에서 userId 추출용)
+        try {
+            const { adminDb } = await import('@/lib/firebase-admin');
+            const admin = (await import('firebase-admin')).default;
+
+            await adminDb.collection('orderMappings').doc(oid).set({
+                userId,
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+            console.log(`주문번호 매핑 저장: ${oid} -> ${userId}`);
+        } catch (error) {
+            console.error('주문번호 매핑 저장 실패:', error);
+            // 매핑 저장 실패해도 결제는 진행
+        }
 
         return NextResponse.json({
             success: true,
