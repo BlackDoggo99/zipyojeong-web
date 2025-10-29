@@ -310,6 +310,7 @@ const handlePCPaymentRequest = async (plan: typeof plans[0], currentUser: User |
         const params = {
             version: '1.0',
             payViewType: 'popup', // 팝업창 모드 설정 (overlay가 아닌 실제 새 창)
+            popupUrl: 'https://stgstdpay.inicis.com/stdpay/INIStdPayStart.php', // 팝업창 URL (테스트 환경)
             mid: payData.mid,
             goodname: productName,
             oid: payData.oid,
