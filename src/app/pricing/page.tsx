@@ -211,7 +211,7 @@ const handleMobilePaymentRequest = async (plan: typeof plans[0]) => {
 
         // 필수 파라미터 설정
         const params: Record<string, string> = {
-            P_INI_PAYMENT: 'CARD,BANK,VBANK,HPP', // 옵션 3: 쉼표 구분자로 여러 결제수단 시도
+            P_INI_PAYMENT: 'CARD', // 모바일은 신용카드만 지원
             P_MID: payData.P_MID,
             P_OID: payData.P_OID,
             P_AMT: payData.P_AMT,
