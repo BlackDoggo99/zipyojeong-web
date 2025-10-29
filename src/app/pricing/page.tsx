@@ -217,7 +217,7 @@ const handleMobilePaymentRequest = async (plan: typeof plans[0]) => {
             P_OID: payData.P_OID,
             P_AMT: payData.P_AMT,
             P_GOODS: payData.P_GOODS,
-            P_UNAME: '테스트 사용자',
+            P_UMANE: '테스터', // 샘플에 P_UMANE으로 되어있음 (오타로 추정되나 샘플과 동일하게)
             P_MOBILE: '01012345678',
             P_EMAIL: 'test@test.com',
             P_NEXT_URL: `${window.location.origin}/api/payment/mobile/callback`,
