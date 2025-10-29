@@ -210,9 +210,8 @@ const handleMobilePaymentRequest = async (plan: typeof plans[0]) => {
         form.acceptCharset = 'euc-kr';
 
         // 필수 파라미터 설정
-        // P_INI_PAYMENT를 설정하지 않으면 모든 결제수단이 표시됨
         const params: Record<string, string> = {
-            // P_INI_PAYMENT 제거 - 모든 결제수단 표시 (신용카드, 계좌이체, 가상계좌, 휴대폰)
+            P_INI_PAYMENT: 'CARD', // 일단 신용카드로 테스트 (필수 파라미터)
             P_MID: payData.P_MID,
             P_OID: payData.P_OID,
             P_AMT: payData.P_AMT,
