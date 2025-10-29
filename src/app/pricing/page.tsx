@@ -342,6 +342,68 @@ const handlePCPaymentRequest = async (plan: typeof plans[0], currentUser: User |
         // 4. INIStdPay.js의 결제 요청 함수 호출
         INIStdPay.pay('SendPayForm_id');
 
+        // 5. Overlay 개선: body 스크롤 활성화 및 ESC 키 리스너 추가
+        setTimeout(() => {
+            // body에 클래스 추가로 스크롤 강제 활성화
+            document.body.classList.add('inicis-active');
+            document.documentElement.classList.add('inicis-active');
+            document.body.style.overflow = 'auto';
+            document.documentElement.style.overflow = 'auto';
+
+            // INIStdPay가 생성한 overlay 요소 찾기
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node instanceof HTMLElement) {
+                            // 이니시스 overlay backdrop 찾기
+                            if (node.id === 'InicisPayLayer' || node.className?.includes('inicis')) {
+                                // backdrop 클릭 시에도 스크롤 가능하도록
+                                node.style.pointerEvents = 'none';
+                                // iframe은 클릭 가능하도록
+                                const iframe = node.querySelector('iframe');
+                                if (iframe) {
+                                    iframe.style.pointerEvents = 'auto';
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+
+            observer.observe(document.body, { childList: true, subtree: true });
+
+            // 결제창 닫힘 감지 및 정리 함수
+            const cleanupOverlay = () => {
+                document.body.classList.remove('inicis-active');
+                document.documentElement.classList.remove('inicis-active');
+                observer.disconnect();
+            };
+
+            // ESC 키로 결제창 닫기
+            const handleEscape = (e: KeyboardEvent) => {
+                if (e.key === 'Escape') {
+                    // 이니시스 결제창 닫기 시도
+                    const closeButton = document.querySelector('[class*="close"]') as HTMLElement;
+                    if (closeButton) {
+                        closeButton.click();
+                    }
+                    cleanupOverlay();
+                    document.removeEventListener('keydown', handleEscape);
+                }
+            };
+
+            document.addEventListener('keydown', handleEscape);
+
+            // 결제 완료/실패 후 자동 정리 (10분 후)
+            setTimeout(() => {
+                cleanupOverlay();
+                document.removeEventListener('keydown', handleEscape);
+            }, 600000);
+
+            // 페이지 이동 시 정리
+            window.addEventListener('beforeunload', cleanupOverlay, { once: true });
+        }, 100);
+
     } catch (error: any) {
         console.error("결제 요청 중 오류:", error);
         alert(`결제 요청 중 오류가 발생했습니다: ${error.message || '서버 오류'}`);

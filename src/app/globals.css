@@ -91,4 +91,14 @@
     ime-mode: auto;
     -webkit-ime-mode: auto;
   }
+
+  /* KG이니시스 결제창 overlay 개선 - body 스크롤 활성화 */
+  body.inicis-active {
+    overflow: auto !important;
+    position: static !important;
+  }
+
+  html.inicis-active {
+    overflow: auto !important;
+  }
 }
