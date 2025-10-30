@@ -158,16 +158,24 @@ export async function POST(request: NextRequest) {
                 const amount = parseInt(resultMap.P_AMT);
                 let planName = '';
                 let planLevel = 0;
+                let planId: 'free' | 'starter' | 'basic' | 'standard' | 'pro' = 'free';
 
                 if (amount >= 99000) {
                     planName = '프리미엄';
                     planLevel = 3;
+                    planId = 'pro';
                 } else if (amount >= 49000) {
                     planName = '스탠다드';
                     planLevel = 2;
+                    planId = 'standard';
+                } else if (amount >= 14900) {
+                    planName = '스타터';
+                    planLevel = 1;
+                    planId = 'starter';
                 } else if (amount >= 9900) {
                     planName = '베이직';
                     planLevel = 1;
+                    planId = 'basic';
                 }
 
                 if (planLevel > 0) {
@@ -186,12 +194,21 @@ export async function POST(request: NextRequest) {
                         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
                     };
 
+                    // users 컬렉션의 subscription 필드 업데이트
                     await adminDb.collection('users').doc(userId).set(
                         { subscription: subscriptionData },
                         { merge: true }
                     );
 
-                    console.log(`모바일: 사용자 ${userId}의 구독 정보 업데이트 완료: ${planName}`);
+                    // user_plans 컬렉션에도 저장 (Dashboard에서 참조)
+                    await adminDb.collection('user_plans').doc(userId).set({
+                        plan: planId,
+                        expiryDate: endDate.toISOString(),
+                        isActive: true,
+                        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                    }, { merge: true });
+
+                    console.log(`모바일: 사용자 ${userId}의 구독 정보 업데이트 완료: ${planName} (${planId})`);
                 }
             } else {
                 console.warn('주문번호에서 userId를 추출할 수 없습니다:', resultMap.P_OID);
