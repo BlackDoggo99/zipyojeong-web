@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import admin from 'firebase-admin';
 
-const SIGN_KEY = process.env.INICIS_SIGN_KEY || "SU5JTElURV9UUklQTEVERVNfS0VZU1RS";
+// 임시로 테스트 SIGN_KEY 하드코딩
+const SIGN_KEY = "SU5JTElURV9UUklQTEVERVNfS0VZU1RS"; // process.env.INICIS_SIGN_KEY || "SU5JTElURV9UUklQTEVERVNfS0VZU1RS";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://zipyojeong.vercel.app";
 
 // HTML 리다이렉션 헬퍼 함수
