@@ -172,7 +172,7 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
-    href="https://play.google.com/store/apps/details?id=com.zipyojeong.app&pli=1"
+    href="https://play.google.com/store/apps/details?id=com.zipyojeong.app"
     target="_blank"
     rel="noopener noreferrer"
                >
