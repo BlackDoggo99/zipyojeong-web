@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,18 +15,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 이메일 전송 설정 (실제 서비스에서는 환경변수로 관리)
-    const transporter = nodemailer.createTransporter({
-      service: 'gmail',
-      auth: {
-        user: process.env.GMAIL_USER || 'zipyojeonghelp@gmail.com',
-        pass: process.env.GMAIL_APP_PASSWORD || '', // Gmail 앱 비밀번호
-      },
-    });
+    // Resend API 키 확인
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY is not configured');
+      return NextResponse.json(
+        { error: '이메일 서비스가 설정되지 않았습니다.' },
+        { status: 500 }
+      );
+    }
 
-    // 관리자에게 보낼 이메일 내용
-    const adminEmailContent = {
-      from: 'zipyojeonghelp@gmail.com',
+    // 관리자에게 이메일 전송
+    await resend.emails.send({
+      from: 'onboarding@resend.dev', // Resend 기본 발신 주소 (나중에 도메인 인증 후 변경 가능)
       to: 'zipyojeonghelp@gmail.com',
       subject: `[집요정 문의] ${inquiryType} - ${name}님으로부터`,
       html: `
@@ -48,11 +50,11 @@ export async function POST(request: NextRequest) {
           </p>
         </div>
       `,
-    };
+    });
 
-    // 사용자에게 보낼 자동 응답 이메일
-    const userEmailContent = {
-      from: 'zipyojeonghelp@gmail.com',
+    // 사용자에게 자동 응답 이메일 전송
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
       to: email,
       subject: '[집요정] 문의가 정상적으로 접수되었습니다',
       html: `
@@ -101,11 +103,7 @@ export async function POST(request: NextRequest) {
           </div>
         </div>
       `,
-    };
-
-    // 이메일 전송
-    await transporter.sendMail(adminEmailContent);
-    await transporter.sendMail(userEmailContent);
+    });
 
     // 성공 응답
     return NextResponse.json({
