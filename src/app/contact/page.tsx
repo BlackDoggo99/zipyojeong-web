@@ -39,26 +39,42 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    // 실제로는 여기서 API를 호출하여 문의를 전송
-    // 현재는 시뮬레이션
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setLoading(false);
-    setSubmitted(true);
-    
-    // 3초 후 폼 리셋
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        inquiryType: 'general',
-        message: ''
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-    }, 5000);
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || '문의 전송에 실패했습니다.');
+      }
+
+      setLoading(false);
+      setSubmitted(true);
+
+      // 5초 후 폼 리셋
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          company: '',
+          inquiryType: 'general',
+          message: ''
+        });
+      }, 5000);
+    } catch (error) {
+      console.error('Contact form error:', error);
+      setLoading(false);
+      alert(error instanceof Error ? error.message : '문의 전송 중 오류가 발생했습니다.');
+    }
   };
 
   return (
