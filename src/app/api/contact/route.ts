@@ -24,9 +24,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log('Sending admin email...');
     // 관리자에게 이메일 전송
-    await resend.emails.send({
-      from: 'onboarding@resend.dev', // Resend 기본 발신 주소 (나중에 도메인 인증 후 변경 가능)
+    const adminResult = await resend.emails.send({
+      from: 'onboarding@resend.dev',
       to: 'zipyojeonghelp@gmail.com',
       subject: `[집요정 문의] ${inquiryType} - ${name}님으로부터`,
       html: `
@@ -51,9 +52,11 @@ export async function POST(request: NextRequest) {
         </div>
       `,
     });
+    console.log('Admin email sent:', adminResult);
 
+    console.log('Sending user confirmation email...');
     // 사용자에게 자동 응답 이메일 전송
-    await resend.emails.send({
+    const userResult = await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: email,
       subject: '[집요정] 문의가 정상적으로 접수되었습니다',
@@ -104,15 +107,24 @@ export async function POST(request: NextRequest) {
         </div>
       `,
     });
+    console.log('User email sent:', userResult);
 
     // 성공 응답
     return NextResponse.json({
       success: true,
-      message: '문의가 성공적으로 전송되었습니다.'
+      message: '문의가 성공적으로 전송되었습니다.',
+      adminEmailId: adminResult.data?.id,
+      userEmailId: userResult.data?.id,
     });
 
   } catch (error) {
-    console.error('Contact form error:', error);
+    console.error('Contact form error details:', error);
+    // 에러 객체를 좀 더 자세히 로깅
+    if (error instanceof Error) {
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
     return NextResponse.json(
       { error: '문의 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' },
       { status: 500 }
