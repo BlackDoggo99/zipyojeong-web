@@ -146,12 +146,13 @@ export default function SignupPage() {
     setLoading(true);
     setError('');
 
+    // TODO: 본인인증 계약 완료 후 활성화
     // 본인인증 필수 검증
-    if (!isVerified) {
-      setError('본인인증을 완료해주세요.');
-      setLoading(false);
-      return;
-    }
+    // if (!isVerified) {
+    //   setError('본인인증을 완료해주세요.');
+    //   setLoading(false);
+    //   return;
+    // }
 
     // 입력값 검증
     if (!address) {
@@ -232,8 +233,9 @@ export default function SignupPage() {
         
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* TODO: 본인인증 계약 완료 후 활성화 */}
             {/* 본인인증 버튼 */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label className="text-sm font-medium dark:text-gray-200">
                 본인인증 <span className="text-red-500">*</span>
               </Label>
@@ -263,7 +265,7 @@ export default function SignupPage() {
                   본인인증이 완료되었습니다. 이름과 연락처가 자동으로 입력되었습니다.
                 </div>
               )}
-            </div>
+            </div> */}
 
             <div className="space-y-2">
               <Label htmlFor="name">
@@ -272,15 +274,14 @@ export default function SignupPage() {
               <Input
                 id="name"
                 type="text"
-                placeholder="본인인증 후 자동으로 입력됩니다"
+                placeholder="이름을 입력하세요"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                disabled={true}
+                disabled={loading}
                 autoComplete="name"
                 lang="ko"
                 inputMode="text"
-                className="bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
               />
             </div>
 
@@ -291,13 +292,12 @@ export default function SignupPage() {
               <Input
                 id="phone"
                 type="tel"
-                placeholder="본인인증 후 자동으로 입력됩니다"
+                placeholder="연락처를 입력하세요 (예: 010-1234-5678)"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                disabled={true}
+                disabled={loading}
                 autoComplete="tel"
-                className="bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
               />
             </div>
 
