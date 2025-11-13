@@ -131,7 +131,7 @@ export default function TermsPage() {
                     <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">6. 인증 및 보안 서비스</h3>
                     <ul className="ml-4 space-y-1 text-gray-700 dark:text-gray-300">
                       <li>• PG사 본인인증 서비스</li>
-                      <li>• 생체인증 및 PIN 보안</li>
+                      <li>• PIN 보안</li>
                     </ul>
                   </div>
                 </div>

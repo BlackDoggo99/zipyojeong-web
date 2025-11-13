@@ -16,12 +16,20 @@ export interface UserProfile {
   uid: string;
   email: string;
   name: string;
+  phone?: string;
   createdAt: Date;
   address?: {
     postcode: string;
     address: string;
     detailAddress: string;
     fullAddress: string;
+  };
+  verification?: {
+    phone: string;
+    birthday: string;
+    ci: string;
+    verified: boolean;
+    verifiedAt: string;
   };
 }
 
@@ -127,14 +135,27 @@ export function useAuth() {
     }
   };
 
-  const signUp = async (email: string, password: string, name: string, address: {
-    postcode: string;
-    address: string;
-    detailAddress: string;
-    fullAddress: string;
-  }, referralCode?: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    name: string,
+    address: {
+      postcode: string;
+      address: string;
+      detailAddress: string;
+      fullAddress: string;
+    },
+    referralCode?: string,
+    verification?: {
+      phone: string;
+      birthday: string;
+      ci: string;
+      verified: boolean;
+      verifiedAt: string;
+    }
+  ) => {
     try {
-      console.log('회원가입 시작:', { email, name, address, referralCode });
+      console.log('회원가입 시작:', { email, name, address, referralCode, hasVerification: !!verification });
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       console.log('Firebase Auth 계정 생성 성공:', user.uid);
@@ -144,8 +165,10 @@ export function useAuth() {
         uid: user.uid,
         email: user.email!,
         name,
+        phone: verification?.phone,
         createdAt: new Date(),
         address,
+        verification,
       };
 
       // Firestore에 저장할 때는 Timestamp 사용
