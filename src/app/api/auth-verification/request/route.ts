@@ -24,7 +24,9 @@ export async function POST(request: NextRequest) {
     const authUrl = 'https://sa.inicis.com/auth';
 
     // 성공/실패 콜백 URL (결과 페이지로 리다이렉트)
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    // 요청의 origin을 사용하여 동적으로 baseUrl 설정
+    const origin = request.headers.get('origin') || request.headers.get('referer')?.split('/').slice(0, 3).join('/');
+    const baseUrl = origin || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const successUrl = `${baseUrl}/auth-verification-result`;
     const failUrl = `${baseUrl}/auth-verification-result`;
 
