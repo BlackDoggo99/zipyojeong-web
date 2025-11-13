@@ -146,6 +146,13 @@ export default function SignupPage() {
     setLoading(true);
     setError('');
 
+    // 본인인증 필수 검증
+    if (!isVerified) {
+      setError('본인인증을 완료해주세요.');
+      setLoading(false);
+      return;
+    }
+
     // 입력값 검증
     if (!address) {
       setError('주소를 입력해주세요.');
@@ -265,15 +272,15 @@ export default function SignupPage() {
               <Input
                 id="name"
                 type="text"
-                placeholder="이름을 입력하세요"
+                placeholder="본인인증 후 자동으로 입력됩니다"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                disabled={loading || isVerified}
+                disabled={true}
                 autoComplete="name"
                 lang="ko"
                 inputMode="text"
-                className={isVerified ? 'bg-gray-100 dark:bg-gray-800' : ''}
+                className="bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
               />
             </div>
 
@@ -284,13 +291,13 @@ export default function SignupPage() {
               <Input
                 id="phone"
                 type="tel"
-                placeholder="연락처를 입력하세요"
+                placeholder="본인인증 후 자동으로 입력됩니다"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                disabled={loading || isVerified}
+                disabled={true}
                 autoComplete="tel"
-                className={isVerified ? 'bg-gray-100 dark:bg-gray-800' : ''}
+                className="bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
               />
             </div>
 
