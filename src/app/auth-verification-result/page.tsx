@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 
 /**
- * 이니시스 본인인증 결과 처리 페이지
- * 팝업 창에서 로드되며, 부모 창(회원가입 페이지)에 결과를 전송합니다.
+ * 이니시스 본인인증 결과 처리 컴포넌트
  */
-export default function AuthVerificationResultPage() {
+function AuthVerificationResultContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
   const [message, setMessage] = useState('본인인증 결과를 처리하고 있습니다...');
@@ -138,5 +137,25 @@ export default function AuthVerificationResultPage() {
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * 이니시스 본인인증 결과 처리 페이지
+ * 팝업 창에서 로드되며, 부모 창(회원가입 페이지)에 결과를 전송합니다.
+ */
+export default function AuthVerificationResultPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8 text-center">
+          <Loader2 className="h-16 w-16 text-blue-500 mx-auto mb-4 animate-spin" />
+          <h2 className="text-xl font-semibold mb-2">본인인증 처리 중</h2>
+          <p className="text-gray-600">잠시만 기다려주세요...</p>
+        </div>
+      </div>
+    }>
+      <AuthVerificationResultContent />
+    </Suspense>
   );
 }
