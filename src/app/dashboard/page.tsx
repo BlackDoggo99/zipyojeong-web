@@ -434,6 +434,9 @@ export default function DashboardPage() {
               <p className="text-gray-400 text-xs">
                 연락처 : 010-9437-8487
               </p>
+              <p className="text-gray-400 text-xs">
+                통신판매업신고번호 : 제2025-광주서구-0888호
+              </p>
             </div>
             
             <div>
