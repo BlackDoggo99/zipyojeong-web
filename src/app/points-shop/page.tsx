@@ -390,7 +390,7 @@ export default function PointsShopPage() {
             <div className="space-y-3 text-blue-700 dark:text-blue-400">
               <div className="flex items-center">
                 <Crown className="w-4 h-4 mr-2" />
-                <span>친구 추천: 1명당 5,000P 적립</span>
+                <span>친구 추천: 1명당 10,000P 적립</span>
               </div>
               <div className="flex items-center">
                 <Check className="w-4 h-4 mr-2" />

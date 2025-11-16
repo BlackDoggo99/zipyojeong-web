@@ -40,6 +40,20 @@ service cloud.firestore {
       allow list: if request.auth != null && request.auth.uid == userId;
     }
 
+    // 🔥 추가: 사용자 플랜 정보 (user_plans 컬렉션)
+    match /user_plans/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null &&
+                  (request.auth.token.admin == true || request.auth.uid == userId);
+    }
+
+    // 🔥 추가: 사용자별 구독 정보 서브컬렉션
+    match /users/{userId}/subscriptions/{subscriptionId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null &&
+                  (request.auth.token.admin == true || request.auth.uid == userId);
+    }
+
     // 기타 컬렉션들은 인증된 사용자만 자신의 데이터 접근
     match /{document=**} {
       allow read, write: if request.auth != null;

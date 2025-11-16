@@ -99,10 +99,10 @@ export function useAuth() {
       // 배치 작업으로 모든 처리를 한 번에
       const batch = writeBatch(firestore);
 
-      // 추천인에게 5000P 지급
+      // 추천인에게 10000P 지급
       const referrerRef = doc(firestore, 'users', referrerId);
       batch.update(referrerRef, {
-        points: increment(5000),
+        points: increment(10000),
         lastRewardAt: Timestamp.now(),
       });
 
@@ -111,7 +111,7 @@ export function useAuth() {
       batch.set(referralLogRef, {
         referrerId: referrerId,
         newUserId: newUserId,
-        rewardPoints: 5000,
+        rewardPoints: 10000,
         createdAt: Timestamp.now(),
         status: 'completed',
       });
