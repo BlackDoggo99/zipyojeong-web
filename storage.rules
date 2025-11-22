@@ -1,0 +1,58 @@
+rules_version = '2';
+
+// Firebase Storage 보안 규칙
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // 🔐 사용자별 계약서 파일 (contracts)
+    match /contracts/{userId}/{fileName} {
+      // 본인만 읽기/쓰기 가능
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // 파일 크기 제한: 최대 10MB
+      allow write: if request.resource.size < 10 * 1024 * 1024;
+
+      // 허용 파일 형식: PDF, 이미지, 문서
+      allow write: if request.resource.contentType.matches('application/pdf') ||
+                     request.resource.contentType.matches('image/.*') ||
+                     request.resource.contentType.matches('application/msword') ||
+                     request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.*');
+    }
+
+    // 🔐 사용자별 프로필 사진
+    match /profile_images/{userId}/{fileName} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // 파일 크기 제한: 최대 5MB
+      allow write: if request.resource.size < 5 * 1024 * 1024;
+
+      // 이미지 파일만 허용
+      allow write: if request.resource.contentType.matches('image/.*');
+    }
+
+    // 🔐 사용자별 영수증/증빙자료 (receipts)
+    match /receipts/{userId}/{fileName} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // 파일 크기 제한: 최대 10MB
+      allow write: if request.resource.size < 10 * 1024 * 1024;
+
+      // 이미지 및 PDF만 허용
+      allow write: if request.resource.contentType.matches('image/.*') ||
+                     request.resource.contentType.matches('application/pdf');
+    }
+
+    // 🔐 사용자별 기타 문서 (documents)
+    match /documents/{userId}/{fileName} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // 파일 크기 제한: 최대 20MB
+      allow write: if request.resource.size < 20 * 1024 * 1024;
+    }
+
+    // 🚫 명시되지 않은 모든 접근 차단 (관리자만 가능)
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

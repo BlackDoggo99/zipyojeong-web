@@ -3,12 +3,14 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // 사용자는 자신의 문서만 읽고 쓸 수 있음
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      
-      // 🔐 중요: plan 필드는 수정 금지 (관리자가 Firebase Console에서만 변경 가능)
-      allow update: if request.auth != null && 
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // 🔐 중요: plan, subscription 필드는 수정 금지 (결제 서버/관리자만 변경 가능)
+      allow update: if request.auth != null &&
                    request.auth.uid == userId &&
-                   !('plan' in request.resource.data.diff(resource.data).changedKeys());
+                   !('plan' in request.resource.data.diff(resource.data).changedKeys()) &&
+                   !('subscription' in request.resource.data.diff(resource.data).changedKeys());
     }
     
     // 세입자 정보는 본인 것만 접근 가능 (최상위 tenants 컬렉션)
@@ -40,11 +42,71 @@ service cloud.firestore {
       allow list: if request.auth != null && request.auth.uid == userId;
     }
 
+    // 🔥 추가: 사용자별 특약사항 (최상위, snake_case 버전)
+    match /users/{userId}/special_terms/{termId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 🔥 추가: 사용자별 계약서 서브컬렉션
+    match /users/{userId}/contracts/{contractId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 🔥 추가: 사용자별 경비 서브컬렉션
+    match /users/{userId}/expenses/{expenseId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 🔥 추가: 사용자별 리포트 서브컬렉션
+    match /users/{userId}/reports/{reportId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 🔥 추가: 사용자별 설정
+    match /users/{userId}/user_settings/{settingId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 🔥 추가: 사용자별 부동산 자산 서브컬렉션
+    match /users/{userId}/property_assets/{assetId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 🔥 추가: 사용자별 차입금(대출) 서브컬렉션
+    match /users/{userId}/loans/{loanId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 🔥 추가: 사용자별 보증금 거래 서브컬렉션
+    match /users/{userId}/deposit_transactions/{transactionId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 🔥 추가: 구독 결제 로그
+    match /subscription_payments/{paymentId} {
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+    }
+
+    // 🔥 추가: 사용자 구독 정보
+    match /user_subscriptions/{subscriptionId} {
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow write: if request.auth != null &&
+                   (request.auth.token.admin == true ||
+                    resource.data.userId == request.auth.uid);
+    }
+
+    // 🔥 추가: 플랜 이력
+    match /plan_history/{historyId} {
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null;
+    }
+
     // 🔥 추가: 사용자 플랜 정보 (user_plans 컬렉션)
     match /user_plans/{userId} {
       allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth != null &&
-                  (request.auth.token.admin == true || request.auth.uid == userId);
+      // 관리자 또는 결제 서버(Admin SDK)만 수정 가능
+      allow write: if request.auth != null && request.auth.token.admin == true;
     }
 
     // 🔥 추가: 사용자별 구독 정보 서브컬렉션
@@ -54,9 +116,23 @@ service cloud.firestore {
                   (request.auth.token.admin == true || request.auth.uid == userId);
     }
 
-    // 기타 컬렉션들은 인증된 사용자만 자신의 데이터 접근
+    // 🔥 추가: 추천인 로그 (본인 관련 기록만 읽기 가능)
+    match /referral_logs/{logId} {
+      allow read: if request.auth != null &&
+                  (resource.data.referrerId == request.auth.uid ||
+                   resource.data.newUserId == request.auth.uid);
+      allow create: if request.auth != null;
+    }
+
+    // 🔥 추가: 포인트 구매 로그 (본인 것만 읽기)
+    match /point_purchases/{purchaseId} {
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+    }
+
+    // 🚫 관리자만 모든 데이터 접근 가능 (일반 사용자는 위에 명시된 규칙만)
     match /{document=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if request.auth != null && request.auth.token.admin == true;
     }
   }
 }
