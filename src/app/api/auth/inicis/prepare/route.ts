@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
       reqSvcCd: '03',                                   // 본인확인 서비스 코드
       mTxId,                                            // 트랜잭션 ID
       authHash,                                         // SHA256 해시
+      flgFixedUser: 'N',                                // 사용자 지정구분 코드 (N: 일반)
       successUrl: `${appUrl}/api/auth/inicis/callback/success`,  // 성공 URL
       failUrl: `${appUrl}/api/auth/inicis/callback/fail`,        // 실패 URL
       reservedMsg: 'isUseToken=Y',                      // 암호화 응답 요청
