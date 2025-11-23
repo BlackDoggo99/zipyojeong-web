@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
       mTxId,                                            // 트랜잭션 ID
       authHash,                                         // SHA256 해시
       flgFixedUser: 'N',                                // 사용자 지정구분 코드 (N: 일반)
+      networkCompany: 'M',                              // 통신사 선택 (M: SKT/KT/LGU+ 모두)
       successUrl: `${appUrl}/api/auth/inicis/callback/success`,  // 성공 URL
       failUrl: `${appUrl}/api/auth/inicis/callback/fail`,        // 실패 URL
       reservedMsg: 'isUseToken=Y',                      // 암호화 응답 요청
