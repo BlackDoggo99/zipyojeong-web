@@ -1,4 +1,4 @@
-import { db } from './firebase';
+import { firestore } from './firebase';
 import { doc, setDoc, getDoc, collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import { UserVerification, UserVerificationCreate } from '@/types/user-verification';
 
@@ -24,7 +24,7 @@ export async function saveUserVerification(
       updatedAt: Timestamp.now(),
     };
 
-    await setDoc(doc(db, 'user_verifications', userId), verificationDoc);
+    await setDoc(doc(firestore, 'user_verifications', userId), verificationDoc);
 
     console.log('[Firestore] 본인인증 정보 저장 완료:', userId);
     return true;
@@ -41,7 +41,7 @@ export async function saveUserVerification(
  */
 export async function getUserVerification(userId: string): Promise<UserVerification | null> {
   try {
-    const docSnap = await getDoc(doc(db, 'user_verifications', userId));
+    const docSnap = await getDoc(doc(firestore, 'user_verifications', userId));
 
     if (docSnap.exists()) {
       return docSnap.data() as UserVerification;
@@ -62,7 +62,7 @@ export async function getUserVerification(userId: string): Promise<UserVerificat
 export async function checkDuplicateByDI(userDi: string): Promise<UserVerification | null> {
   try {
     const q = query(
-      collection(db, 'user_verifications'),
+      collection(firestore, 'user_verifications'),
       where('userDi', '==', userDi)
     );
 
@@ -92,7 +92,7 @@ export async function checkDuplicateByDI(userDi: string): Promise<UserVerificati
 export async function checkDuplicateByCI(userCi: string): Promise<UserVerification | null> {
   try {
     const q = query(
-      collection(db, 'user_verifications'),
+      collection(firestore, 'user_verifications'),
       where('userCi', '==', userCi)
     );
 

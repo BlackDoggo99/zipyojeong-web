@@ -81,7 +81,7 @@ export default function PrivacyPage() {
                   <div>
                     <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">① 회원가입·관리</h3>
                     <ul className="ml-4 space-y-1 text-gray-700 dark:text-gray-300">
-                      <li>• 필수항목: 이름, 이메일주소, 비밀번호, 주소(우편번호, 기본주소, 상세주소)</li>
+                      <li>• 필수항목: 이름, 이메일주소, 휴대전화번호, 비밀번호, 주소(우편번호, 기본주소, 상세주소), 암호화된 이용자 확인 값(CI)</li>
                       <li>• 선택항목: 없음</li>
                     </ul>
                   </div>
@@ -97,7 +97,7 @@ export default function PrivacyPage() {
                     <ul className="ml-4 space-y-1 text-gray-700 dark:text-gray-300">
                       <li>• 결제 정보: 카드번호, 유효기간, CVC, 카드소유자명</li>
                       <li>• 계좌 정보: 은행명, 계좌번호, 예금주명 (문자 기반 입금 인식 기능 사용 시)</li>
-                      <li>• 본인인증 정보: 이름, 생년월일, 성별, 휴대폰번호, 통신사</li>
+                      <li>• 본인인증 정보: 이름, 생년월일, 성별, 휴대폰번호, 통신사, 암호화된 이용자 확인 값(CI)</li>
                     </ul>
                   </div>
                   <div>
