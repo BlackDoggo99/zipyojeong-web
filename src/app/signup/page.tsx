@@ -201,15 +201,15 @@ export default function SignupPage() {
               <Input
                 id="name"
                 type="text"
-                placeholder="이름을 입력하세요"
+                placeholder="본인인증 후 자동으로 입력됩니다"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                disabled={loading || isVerified}
+                disabled={true}
                 autoComplete="name"
                 lang="ko"
                 inputMode="text"
-                className={isVerified ? 'bg-gray-100 dark:bg-gray-800' : ''}
+                className="bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
               />
               {isVerified && (
                 <div className="text-xs text-gray-500">
@@ -225,13 +225,13 @@ export default function SignupPage() {
               <Input
                 id="phone"
                 type="tel"
-                placeholder="연락처를 입력하세요 (예: 010-1234-5678)"
+                placeholder="본인인증 후 자동으로 입력됩니다"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                disabled={loading || isVerified}
+                disabled={true}
                 autoComplete="tel"
-                className={isVerified ? 'bg-gray-100 dark:bg-gray-800' : ''}
+                className="bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
               />
               {isVerified && (
                 <div className="text-xs text-gray-500">
