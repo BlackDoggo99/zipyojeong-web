@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { AddressSearch, AddressData } from '@/components/ui/address-search';
 import { Eye, EyeOff, Loader2, CheckCircle, Home } from 'lucide-react';
+import InicisAuthButton from '@/components/auth/InicisAuthButton';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -24,12 +25,13 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isVerified, setIsVerified] = useState(false);
-  const [verifying, setVerifying] = useState(false);
   const [verificationData, setVerificationData] = useState<{
-    name: string;
-    phone: string;
-    birthday: string;
-    ci: string;
+    userName: string;
+    userPhone: string;
+    userBirthday: string;
+    userDi: string;
+    userCi: string;
+    mTxId: string;
   } | null>(null);
 
   const { signUp } = useAuth();
@@ -45,100 +47,27 @@ export default function SignupPage() {
     return '';
   };
 
-  // 본인인증 시작
-  const handleVerification = async () => {
-    setVerifying(true);
-    setError('');
+  // 본인인증 성공 콜백
+  const handleVerificationSuccess = (result: {
+    userName: string;
+    userPhone: string;
+    userBirthday: string;
+    userGender: 'M' | 'F';
+    isForeign: '0' | '1';
+    userDi: string;
+    userCi: string;
+    mTxId: string;
+  }) => {
+    // 사용자 정보 자동 입력
+    setName(result.userName);
+    setPhone(result.userPhone);
+    setVerificationData(result);
+    setIsVerified(true);
+  };
 
-    try {
-      // 본인인증 요청 파라미터 가져오기
-      const response = await fetch('/api/auth-verification/request', {
-        method: 'POST',
-      });
-
-      const result = await response.json();
-
-      if (!result.success) {
-        throw new Error(result.error || '본인인증 요청 생성에 실패했습니다');
-      }
-
-      const { authUrl, ...params } = result.data;
-
-      // 팝업 창 열기
-      const width = 400;
-      const height = 640;
-      const left = window.screenX + (window.outerWidth - width) / 2;
-      const top = window.screenY + (window.outerHeight - height) / 2;
-
-      const popup = window.open(
-        '',
-        'sa_popup',
-        `width=${width},height=${height},left=${left},top=${top},menubar=yes,status=yes,titlebar=yes,resizable=yes`
-      );
-
-      if (!popup) {
-        throw new Error('팝업 차단이 감지되었습니다. 팝업을 허용해주세요.');
-      }
-
-      // Form 생성 및 제출
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = authUrl;
-      form.target = 'sa_popup';
-
-      Object.entries(params).forEach(([key, value]) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = value as string;
-        form.appendChild(input);
-      });
-
-      document.body.appendChild(form);
-      form.submit();
-      document.body.removeChild(form);
-
-      // 팝업에서 메시지 수신 대기
-      const messageHandler = async (event: MessageEvent) => {
-        // 보안: 이니시스에서 온 메시지만 처리
-        if (event.origin !== window.location.origin) return;
-
-        if (event.data.type === 'AUTH_VERIFICATION_RESULT') {
-          window.removeEventListener('message', messageHandler);
-          popup.close();
-
-          const authResult = event.data.payload;
-
-          if (!authResult.success) {
-            setError(authResult.error || '본인인증에 실패했습니다');
-            setVerifying(false);
-            return;
-          }
-
-          // 본인인증 성공 - 사용자 정보 자동 입력
-          setVerificationData(authResult.data);
-          setName(authResult.data.name);
-          setPhone(authResult.data.phone);
-          setIsVerified(true);
-          setVerifying(false);
-        }
-      };
-
-      window.addEventListener('message', messageHandler);
-
-      // 팝업이 닫히면 정리
-      const checkPopupClosed = setInterval(() => {
-        if (popup.closed) {
-          clearInterval(checkPopupClosed);
-          window.removeEventListener('message', messageHandler);
-          setVerifying(false);
-        }
-      }, 500);
-    } catch (error: any) {
-      console.error('본인인증 오류:', error);
-      setError(error.message || '본인인증 중 오류가 발생했습니다');
-      setVerifying(false);
-    }
+  // 본인인증 실패 콜백
+  const handleVerificationFail = (error: { code: string; message: string }) => {
+    setError(`본인인증 실패: ${error.message} (${error.code})`);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -146,13 +75,12 @@ export default function SignupPage() {
     setLoading(true);
     setError('');
 
-    // TODO: 본인인증 계약 완료 후 활성화
     // 본인인증 필수 검증
-    // if (!isVerified) {
-    //   setError('본인인증을 완료해주세요.');
-    //   setLoading(false);
-    //   return;
-    // }
+    if (!isVerified) {
+      setError('본인인증을 완료해주세요.');
+      setLoading(false);
+      return;
+    }
 
     // 입력값 검증
     if (!address) {
@@ -177,9 +105,10 @@ export default function SignupPage() {
     try {
       // 본인인증 정보와 함께 회원가입
       await signUp(email, password, name, address, referralCode, verificationData ? {
-        phone: verificationData.phone,
-        birthday: verificationData.birthday,
-        ci: verificationData.ci,
+        phone: verificationData.userPhone,
+        birthday: verificationData.userBirthday,
+        ci: verificationData.userCi,
+        di: verificationData.userDi,
         verified: true,
         verifiedAt: new Date().toISOString(),
       } : undefined);
@@ -233,39 +162,37 @@ export default function SignupPage() {
         
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* TODO: 본인인증 계약 완료 후 활성화 */}
             {/* 본인인증 버튼 */}
-            {/* <div className="space-y-2">
+            <div className="space-y-2">
               <Label className="text-sm font-medium dark:text-gray-200">
                 본인인증 <span className="text-red-500">*</span>
               </Label>
-              <Button
-                type="button"
-                onClick={handleVerification}
-                disabled={isVerified || verifying || loading}
-                className={`w-full ${isVerified ? 'bg-green-600 hover:bg-green-700' : ''}`}
+              <InicisAuthButton
+                onSuccess={handleVerificationSuccess}
+                onFail={handleVerificationFail}
+                autoSaveToFirestore={false}
+                className={`w-full px-6 py-3 rounded-lg transition-colors ${
+                  isVerified
+                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed'
+                }`}
               >
-                {verifying ? (
+                {isVerified ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    본인인증 진행 중...
-                  </>
-                ) : isVerified ? (
-                  <>
-                    <CheckCircle className="mr-2 h-4 w-4" />
+                    <CheckCircle className="mr-2 h-4 w-4 inline" />
                     본인인증 완료
                   </>
                 ) : (
                   '본인인증하기'
                 )}
-              </Button>
+              </InicisAuthButton>
               {isVerified && (
                 <div className="text-xs text-green-600 bg-green-50 dark:bg-green-950/30 p-2 rounded-md">
                   <CheckCircle className="w-3 h-3 inline mr-1" />
                   본인인증이 완료되었습니다. 이름과 연락처가 자동으로 입력되었습니다.
                 </div>
               )}
-            </div> */}
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="name">
@@ -278,11 +205,17 @@ export default function SignupPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                disabled={loading}
+                disabled={loading || isVerified}
                 autoComplete="name"
                 lang="ko"
                 inputMode="text"
+                className={isVerified ? 'bg-gray-100 dark:bg-gray-800' : ''}
               />
+              {isVerified && (
+                <div className="text-xs text-gray-500">
+                  본인인증으로 자동 입력된 정보입니다
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -296,9 +229,15 @@ export default function SignupPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                disabled={loading}
+                disabled={loading || isVerified}
                 autoComplete="tel"
+                className={isVerified ? 'bg-gray-100 dark:bg-gray-800' : ''}
               />
+              {isVerified && (
+                <div className="text-xs text-gray-500">
+                  본인인증으로 자동 입력된 정보입니다
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
