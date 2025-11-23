@@ -149,6 +149,22 @@ service cloud.firestore {
       allow delete: if request.auth != null && request.auth.token.admin == true;
     }
 
+    // 🔥 추가: 문의 (contacts 컬렉션)
+    match /contacts/{contactId} {
+      // 생성은 누구나 가능 (문의 제출)
+      allow create: if true;
+
+      // 읽기와 업데이트는 관리자만 가능
+      allow read, update: if request.auth != null &&
+                          (request.auth.token.admin == true ||
+                           request.auth.uid == 'yyWcGI3YY0cNUI5drtIJsCfNVfa2');
+
+      // 삭제는 관리자만 가능
+      allow delete: if request.auth != null &&
+                    (request.auth.token.admin == true ||
+                     request.auth.uid == 'yyWcGI3YY0cNUI5drtIJsCfNVfa2');
+    }
+
     // 🚫 관리자만 모든 데이터 접근 가능 (일반 사용자는 위에 명시된 규칙만)
     match /{document=**} {
       allow read, write: if request.auth != null &&

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { firestore } from '@/lib/firebase';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -109,10 +111,28 @@ export async function POST(request: NextRequest) {
     });
     console.log('User email sent:', userResult);
 
+    // Firestore에 문의 저장
+    const contactData = {
+      name,
+      email,
+      phone: phone || null,
+      company: company || null,
+      inquiryType,
+      message,
+      status: 'pending', // pending, in_progress, completed
+      createdAt: Timestamp.now(),
+      adminEmailId: adminResult.data?.id,
+      userEmailId: userResult.data?.id,
+    };
+
+    const docRef = await addDoc(collection(firestore, 'contacts'), contactData);
+    console.log('Contact saved to Firestore:', docRef.id);
+
     // 성공 응답
     return NextResponse.json({
       success: true,
       message: '문의가 성공적으로 전송되었습니다.',
+      contactId: docRef.id,
       adminEmailId: adminResult.data?.id,
       userEmailId: userResult.data?.id,
     });
