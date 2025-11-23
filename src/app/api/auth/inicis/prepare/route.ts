@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       mTxId,                                            // 트랜잭션 ID
       authHash,                                         // SHA256 해시
       flgFixedUser: 'N',                                // 사용자 지정구분 코드 (N: 일반)
-      providerDevCd: 'TOSS,KFTC,SHINHAN,KB,WOORI,KAKAOBANK',  // 제휴사코드 (본인확인 지원, SMS 제외)
+      providerDevCd: 'PAYCO,PASS,TOSS,KFTC,KAKAO,NAVER,SAMSUNG,SHINHAN,KB,HANA,WOORI,NH,KAKAOBANK',  // 제휴사코드 (SMS 제외)
       successUrl: `${appUrl}/api/auth/inicis/callback/success`,  // 성공 URL
       failUrl: `${appUrl}/api/auth/inicis/callback/fail`,        // 실패 URL
       reservedMsg: 'isUseToken=Y',                      // 암호화 응답 요청
