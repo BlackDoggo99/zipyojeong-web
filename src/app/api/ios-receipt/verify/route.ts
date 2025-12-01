@@ -95,12 +95,24 @@ async function verifyWithApple(
   return response.json();
 }
 
+// 구독 정보 타입
+type SubscriptionInfo = {
+  product_id: string;
+  transaction_id: string;
+  original_transaction_id: string;
+  purchase_date_ms: string;
+  expires_date_ms?: string;
+  is_trial_period?: string;
+  is_in_intro_offer_period?: string;
+  cancellation_date_ms?: string;
+};
+
 /**
  * 최신 유효한 구독 정보 찾기
  */
 function findLatestValidSubscription(
   latestReceiptInfo: AppleReceiptResponse['latest_receipt_info']
-): AppleReceiptResponse['latest_receipt_info'][0] | null {
+): SubscriptionInfo | null {
   if (!latestReceiptInfo || latestReceiptInfo.length === 0) {
     return null;
   }
@@ -249,6 +261,19 @@ export async function POST(request: NextRequest) {
         subscriptionStatus,
         subscriptionPlatform: 'ios',
         subscriptionExpiresAt: Timestamp.fromMillis(expiresDate),
+        updatedAt: Timestamp.now(),
+      },
+      { merge: true }
+    );
+
+    // user_plans 컬렉션에도 저장 (앱에서 사용하는 컬렉션)
+    const activePlanId = subscriptionStatus === 'active' || subscriptionStatus === 'grace_period' ? planId : 'free';
+    await adminDb.collection('user_plans').doc(userId).set(
+      {
+        plan: activePlanId,
+        expiryDate: new Date(expiresDate).toISOString(),
+        isActive: subscriptionStatus === 'active' || subscriptionStatus === 'grace_period',
+        platform: 'ios',
         updatedAt: Timestamp.now(),
       },
       { merge: true }
