@@ -267,17 +267,52 @@ export async function POST(request: NextRequest) {
     );
 
     // user_plans 컬렉션에도 저장 (앱에서 사용하는 컬렉션)
+    const isSandbox = appleResponse.environment === 'Sandbox';
     const activePlanId = subscriptionStatus === 'active' || subscriptionStatus === 'grace_period' ? planId : 'free';
-    await adminDb.collection('user_plans').doc(userId).set(
-      {
-        plan: activePlanId,
-        expiryDate: new Date(expiresDate).toISOString(),
-        isActive: subscriptionStatus === 'active' || subscriptionStatus === 'grace_period',
-        platform: 'ios',
-        updatedAt: Timestamp.now(),
-      },
-      { merge: true }
-    );
+
+    // 기존 구독 확인
+    let finalExpiryDate = expiresDate;
+    let shouldUpdateUserPlans = true;
+    const existingUserPlan = await adminDb.collection('user_plans').doc(userId).get();
+
+    if (existingUserPlan.exists) {
+      const existingData = existingUserPlan.data();
+      const existingExpiryDate = existingData?.expiryDate ? new Date(existingData.expiryDate).getTime() : 0;
+
+      if (isSandbox) {
+        // 샌드박스 테스트: 기존 유효한 구독이 있으면 user_plans 업데이트 안함
+        if (existingExpiryDate > now && existingData?.isActive) {
+          console.log('[iOS Receipt] 샌드박스: 기존 유효 구독 보호, user_plans 업데이트 스킵', {
+            existingExpiry: new Date(existingExpiryDate).toISOString(),
+          });
+          shouldUpdateUserPlans = false;
+        }
+      } else {
+        // 프로덕션: 기존 만료일이 새 구독 시작일보다 나중이면, 기존 만료일 기준으로 구독 기간 추가
+        if (existingExpiryDate > purchaseDate && existingData?.isActive) {
+          const newSubscriptionDuration = expiresDate - purchaseDate;
+          finalExpiryDate = existingExpiryDate + newSubscriptionDuration;
+          console.log('[iOS Receipt] 기존 구독 연장:', {
+            existingExpiry: new Date(existingExpiryDate).toISOString(),
+            newDuration: newSubscriptionDuration,
+            finalExpiry: new Date(finalExpiryDate).toISOString(),
+          });
+        }
+      }
+    }
+
+    if (shouldUpdateUserPlans) {
+      await adminDb.collection('user_plans').doc(userId).set(
+        {
+          plan: activePlanId,
+          expiryDate: new Date(finalExpiryDate).toISOString(),
+          isActive: subscriptionStatus === 'active' || subscriptionStatus === 'grace_period',
+          platform: 'ios',
+          updatedAt: Timestamp.now(),
+        },
+        { merge: true }
+      );
+    }
 
     // 10. 영수증 검증 로그 저장
     await adminDb.collection('receipt_verifications').add({
