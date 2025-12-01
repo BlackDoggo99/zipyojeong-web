@@ -30,6 +30,16 @@ interface InicisAuthButtonProps {
 }
 
 /**
+ * iOS/iPad 기기 감지
+ */
+function isIOSDevice(): boolean {
+  if (typeof window === 'undefined') return false;
+  const userAgent = navigator.userAgent.toLowerCase();
+  return /ipad|iphone|ipod/.test(userAgent) ||
+    (userAgent.includes('macintosh') && navigator.maxTouchPoints > 1); // iPad Pro 감지
+}
+
+/**
  * KG이니시스 본인인증 버튼 컴포넌트
  *
  * 사용 예시:
@@ -109,6 +119,32 @@ export default function InicisAuthButton({
 
       console.log('[이니시스] 인증 시작:', { mTxId: authParams.mTxId });
 
+      // iOS/iPad에서는 팝업 대신 현재 창에서 Form 제출 (redirect 방식)
+      if (isIOSDevice()) {
+        console.log('[이니시스] iOS 감지 - redirect 방식 사용');
+
+        // 현재 페이지 URL을 세션 스토리지에 저장 (인증 후 복귀용)
+        sessionStorage.setItem('inicis_return_url', window.location.href);
+
+        // 현재 창에서 Form 생성 및 제출
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'https://sa.inicis.com/id/auth';
+
+        Object.entries(authParams).forEach(([key, value]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = value as string;
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+        return; // 페이지 이동하므로 여기서 종료
+      }
+
+      // PC/Android: 기존 팝업 방식 유지
       // 2. 팝업 열기 (400x640)
       const popup = window.open(
         '',

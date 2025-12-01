@@ -179,6 +179,42 @@ export default function TermsPage() {
               </section>
 
               <section>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">제6조의2 (자동 갱신 구독)</h2>
+                <div className="space-y-3 ml-4">
+                  <p className="text-gray-700 dark:text-gray-300 font-semibold">
+                    본 조항은 Apple App Store를 통한 자동 갱신 구독에 적용됩니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    1. <strong>구독 상품:</strong> 집요정은 다음과 같은 자동 갱신 구독 상품을 제공합니다.
+                  </p>
+                  <ul className="ml-8 space-y-1 text-gray-700 dark:text-gray-300">
+                    <li>• 스타터: 월 ₩15,000 / 연 ₩169,000</li>
+                    <li>• 베이직: 월 ₩25,000 / 연 ₩279,000</li>
+                    <li>• 스탠다드: 월 ₩59,000 / 연 ₩649,000</li>
+                    <li>• 프로: 월 ₩89,000 / 연 ₩990,000</li>
+                  </ul>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    2. <strong>구독 기간:</strong> 월간 구독은 1개월, 연간 구독은 1년 단위로 제공됩니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    3. <strong>자동 갱신:</strong> 구독은 현재 기간이 종료되기 최소 24시간 전에 자동 갱신이 해제되지 않는 한 자동으로 갱신됩니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    4. <strong>결제:</strong> 구매 확인 시 iTunes 계정에 결제가 청구됩니다. 갱신 비용은 현재 기간 종료 전 24시간 이내에 청구됩니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    5. <strong>구독 관리 및 취소:</strong> 구매 후 App Store 계정 설정에서 구독을 관리하고 자동 갱신을 해제할 수 있습니다. (설정 → Apple ID → 구독)
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    6. <strong>무료 체험:</strong> 무료 체험 기간이 제공되는 경우, 미사용 부분은 구독 구매 시 소멸됩니다.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    7. <strong>환불:</strong> Apple App Store를 통한 구독의 환불은 Apple의 환불 정책을 따릅니다.
+                  </p>
+                </div>
+              </section>
+
+              <section>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">제7조 (회원의 의무)</h2>
                 <div className="space-y-3 ml-4">
                   <p className="text-gray-700 dark:text-gray-300 mb-2">
