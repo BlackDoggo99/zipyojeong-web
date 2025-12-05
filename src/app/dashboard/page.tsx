@@ -70,9 +70,12 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDownloadApp = () => {
-    // 실제 앱 다운로드 링크로 연결 (현재는 플레이스토어 예시)
+  const handleDownloadAndroid = () => {
     window.open('https://play.google.com/store/apps/details?id=com.zipyojeong.app&pli=1', '_blank');
+  };
+
+  const handleDownloadIos = () => {
+    window.open('https://apps.apple.com/kr/app/%EC%A7%91%EC%9A%94%EC%A0%95-%EC%9E%84%EB%8C%80%EC%9D%B8-%EC%9B%94%EC%84%B8-%EC%9E%90%EB%8F%99%EA%B4%80%EB%A6%AC-%EB%B9%84%EC%84%9C/id6755774075', '_blank');
   };
 
   return (
@@ -284,7 +287,7 @@ export default function DashboardPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   variant="secondary"
-                  onClick={handleDownloadApp}
+                  onClick={handleDownloadAndroid}
                   className="flex-1 text-gray-900 dark:text-white"
                 >
                   <Download className="w-4 h-4 mr-2" />
@@ -292,12 +295,11 @@ export default function DashboardPage() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="flex-1 border-white text-white hover:bg-white hover:text-blue-600 opacity-75 cursor-not-allowed"
-                  onClick={handleDownloadApp}
-                  disabled
+                  className="flex-1 border-white text-white hover:bg-white hover:text-blue-600"
+                  onClick={handleDownloadIos}
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  iOS 앱 준비중입니다.
+                  iOS 앱 다운로드
                 </Button>
               </div>
             </CardContent>

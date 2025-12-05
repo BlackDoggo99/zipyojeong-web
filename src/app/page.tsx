@@ -181,13 +181,19 @@ export default function HomePage() {
                  Android 다운로드
                </Button>
              </Link>
-              <Button size="lg" variant="secondary" className="px-8 py-4 text-lg opacity-75 cursor-not-allowed" disabled>
-                <Apple className="w-5 h-5 mr-2" />
-                iOS (준비중)
-              </Button>
+              <Link
+                href="https://apps.apple.com/kr/app/%EC%A7%91%EC%9A%94%EC%A0%95-%EC%9E%84%EB%8C%80%EC%9D%B8-%EC%9B%94%EC%84%B8-%EC%9E%90%EB%8F%99%EA%B4%80%EB%A6%AC-%EB%B9%84%EC%84%9C/id6755774075"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button size="lg" variant="secondary" className="px-8 py-4 text-lg">
+                  <Apple className="w-5 h-5 mr-2" />
+                  iOS 다운로드
+                </Button>
+              </Link>
             </div>
             <p className="text-sm opacity-75 mt-4">
-              Android 5.0 이상 지원 | iOS 버전은 곧 출시 예정입니다
+              Android 5.0 이상 | iOS 14.0 이상 지원
             </p>
           </div>
         </div>
